@@ -24,12 +24,17 @@ class MyApp extends StatelessWidget {
               const Text('App Theme Applied!'),
               const SizedBox(height: 20),
               CustomButton(
-                text: "Confirm Order",
                 icon: Icons.arrow_forward,
-                backgroundColor: AppColors.primary,
-                iconColor: Colors.white,
+                text: "Secondary Action",
+                backgroundColor: Colors.transparent,
+                textColor: AppColors.primary,
+                borderColor: AppColors.primary,
+                borderWidth: 2,
+                mainAxisAlignment: MainAxisAlignment.center,
+                iconLeading: true,
+                // icon: Icons.arrow_forward,
                 onPressed: () {
-                  // Order confirmation logic
+                  // Action
                 },
               ),
             ],
