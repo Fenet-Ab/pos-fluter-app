@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/app_colors.dart';
+import 'shared/widgets/custom_button.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,9 +16,24 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'POS Application',
       theme: AppTheme.lightTheme,
-      home: const Scaffold(
+      home: Scaffold(
         body: Center(
-          child: Text('App Theme Applied!'),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('App Theme Applied!'),
+              const SizedBox(height: 20),
+              CustomButton(
+                text: "Confirm Order",
+                icon: Icons.arrow_forward,
+                backgroundColor: AppColors.primary,
+                iconColor: Colors.white,
+                onPressed: () {
+                  // Order confirmation logic
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

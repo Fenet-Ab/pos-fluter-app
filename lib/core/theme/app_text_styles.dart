@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 class AppTextStyles {
   static TextStyle heading({Color? color}) {
-    return TextStyle(
+    return GoogleFonts.roboto(
       fontSize: 24,
       fontWeight: FontWeight.bold,
       color: color ?? AppColors.textPrimary,
@@ -11,7 +12,7 @@ class AppTextStyles {
   }
 
   static TextStyle subHeading({Color? color}) {
-    return TextStyle(
+    return GoogleFonts.roboto(
       fontSize: 18,
       fontWeight: FontWeight.w600,
       color: color ?? AppColors.textPrimary,
@@ -19,7 +20,7 @@ class AppTextStyles {
   }
 
   static TextStyle body({Color? color}) {
-    return TextStyle(
+    return GoogleFonts.roboto(
       fontSize: 14,
       fontWeight: FontWeight.w500,
       color: color ?? AppColors.textSecondary,
@@ -27,7 +28,7 @@ class AppTextStyles {
   }
 
   static TextStyle button({Color? color}) {
-    return TextStyle(
+    return GoogleFonts.roboto(
       fontSize: 16,
       fontWeight: FontWeight.bold,
       color: color ?? Colors.white,
