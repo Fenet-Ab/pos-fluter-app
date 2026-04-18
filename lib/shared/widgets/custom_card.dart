@@ -54,7 +54,7 @@ class CustomCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(24),
 
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
@@ -78,7 +78,7 @@ class CustomCard extends StatelessWidget {
           children: [
             // Icon Container
             Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color:
                     iconBackgroundColor ?? AppColors.primary.withOpacity(0.08),
@@ -87,11 +87,11 @@ class CustomCard extends StatelessWidget {
               child: Icon(
                 icon,
                 color: iconColor ?? AppColors.primary,
-                size: 38,
+                size: 26,
               ),
             ),
 
-            const SizedBox(height: 14),
+            const SizedBox(height: 4),
 
             // Bold Text Label
             Text(
@@ -101,7 +101,7 @@ class CustomCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: AppTextStyles.body().copyWith(
                 fontWeight: FontWeight.w900,
-                fontSize: 15,
+                fontSize: 13,
                 color: textColor ?? AppColors.textPrimary,
                 letterSpacing: 0.2,
               ),
