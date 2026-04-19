@@ -41,7 +41,9 @@ class SalesHistoryCard extends StatelessWidget {
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFDDE4FF), // Slightly darker blue for icon box
+                  color: const Color(
+                    0xFFDDE4FF,
+                  ), // Slightly darker blue for icon box
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: const Icon(
@@ -51,7 +53,7 @@ class SalesHistoryCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // Middle: Order Details
               Expanded(
                 child: Column(
@@ -63,11 +65,13 @@ class SalesHistoryCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             orderId,
-                            style: AppTextStyles.body(color: const Color(0xFF041B3C)).copyWith(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w900,
-                              height: 1.2,
-                            ),
+                            style:
+                                AppTextStyles.body(
+                                  color: const Color(0xFF041B3C),
+                                ).copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  // height: 1.2,
+                                ),
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -77,34 +81,31 @@ class SalesHistoryCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       "$time • $itemCount Items",
-                      style: AppTextStyles.body(color: const Color(0xFF535D7A)).copyWith(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: AppTextStyles.body(
+                        color: const Color(0xFF535D7A),
+                      ).copyWith(fontWeight: FontWeight.normal),
                     ),
                   ],
                 ),
               ),
-              
+
               const SizedBox(width: 12),
-              
+
               // Right: Amount and Chevron
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
                     "ETB",
-                    style: AppTextStyles.body(color: const Color(0xFF041B3C)).copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w900,
-                    ),
+                    style: AppTextStyles.body(
+                      color: const Color(0xFF041B3C),
+                    ).copyWith(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     amount.toStringAsFixed(2),
-                    style: AppTextStyles.body(color: const Color(0xFF041B3C)).copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w900,
-                    ),
+                    style: AppTextStyles.body(
+                      color: const Color(0xFF041B3C),
+                    ).copyWith(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   const Icon(
