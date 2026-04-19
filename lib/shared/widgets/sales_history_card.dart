@@ -22,6 +22,31 @@ class SalesHistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Determine theme based on status
+    final statusUpper = status.toUpperCase();
+    IconData iconData;
+    Color iconColor;
+    Color iconBgColor;
+
+    switch (statusUpper) {
+      case 'REFUNDED':
+        iconData = Icons.undo_rounded;
+        iconColor = const Color(0xFFD48B00);
+        iconBgColor = const Color(0xFFFFF3DB);
+        break;
+      case 'FAILED':
+        iconData = Icons.error_outline_rounded;
+        iconColor = const Color(0xFFDE350B);
+        iconBgColor = const Color(0xFFFFE9E9);
+        break;
+      case 'COMPLETED':
+      default:
+        iconData = Icons.receipt_long_rounded;
+        iconColor = const Color(0xFF003D95);
+        iconBgColor = const Color(0xFFDDE4FF);
+        break;
+    }
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
@@ -36,22 +61,22 @@ class SalesHistoryCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Left: Receipt Icon in a box
+              // Left: Status-specific Icon in a box
               Container(
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFDDE4FF), // Slightly darker blue for icon box
+                  color: iconBgColor,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(
-                  Icons.receipt_long_rounded,
-                  color: Color(0xFF003D95), // Deep blue icon
+                child: Icon(
+                  iconData,
+                  color: iconColor,
                   size: 28,
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // Middle: Order Details
               Expanded(
                 child: Column(
@@ -63,10 +88,10 @@ class SalesHistoryCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             orderId,
-                            style: AppTextStyles.body(color: const Color(0xFF041B3C)).copyWith(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w900,
-                              height: 1.2,
+                            style: AppTextStyles.body(
+                              color: const Color(0xFF041B3C),
+                            ).copyWith(
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -77,34 +102,31 @@ class SalesHistoryCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       "$time • $itemCount Items",
-                      style: AppTextStyles.body(color: const Color(0xFF535D7A)).copyWith(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: AppTextStyles.body(
+                        color: const Color(0xFF535D7A),
+                      ).copyWith(fontWeight: FontWeight.normal),
                     ),
                   ],
                 ),
               ),
-              
+
               const SizedBox(width: 12),
-              
+
               // Right: Amount and Chevron
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
                     "ETB",
-                    style: AppTextStyles.body(color: const Color(0xFF041B3C)).copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w900,
-                    ),
+                    style: AppTextStyles.body(
+                      color: const Color(0xFF041B3C),
+                    ).copyWith(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     amount.toStringAsFixed(2),
-                    style: AppTextStyles.body(color: const Color(0xFF041B3C)).copyWith(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w900,
-                    ),
+                    style: AppTextStyles.body(
+                      color: const Color(0xFF041B3C),
+                    ).copyWith(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   const Icon(
@@ -137,6 +159,14 @@ class _StatusBadge extends StatelessWidget {
         bgColor = const Color(0xFFD9F2E9);
         textColor = const Color(0xFF2EA572);
         break;
+      case 'REFUNDED':
+        bgColor = const Color(0xFFFFF3DB);
+        textColor = const Color(0xFFD48B00);
+        break;
+      case 'FAILED':
+        bgColor = const Color(0xFFFFE9E9);
+        textColor = const Color(0xFFDE350B);
+        break;
       case 'PENDING':
         bgColor = const Color(0xFFFFF3DB);
         textColor = const Color(0xFFD48B00);
@@ -145,6 +175,7 @@ class _StatusBadge extends StatelessWidget {
         bgColor = const Color(0xFFE9EEFF);
         textColor = const Color(0xFF535D7A);
     }
+
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
