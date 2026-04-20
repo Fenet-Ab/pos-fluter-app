@@ -21,6 +21,12 @@ class TotalCard extends StatelessWidget {
   /// Height of the card.
   final double? height;
 
+  /// The color of the card border.
+  final Color? borderColor;
+
+  /// The width of the card border.
+  final double borderWidth;
+
   const TotalCard({
     super.key,
     this.title = 'TOTAL',
@@ -28,6 +34,8 @@ class TotalCard extends StatelessWidget {
     this.backgroundColor,
     this.valueColor,
     this.height,
+    this.borderColor,
+    this.borderWidth = 1.0,
   });
 
   @override
@@ -39,6 +47,10 @@ class TotalCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor ?? const Color(0xFFE9EEFF),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: borderColor ?? Colors.transparent,
+          width: borderWidth,
+        ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
