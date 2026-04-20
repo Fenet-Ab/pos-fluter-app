@@ -9,7 +9,7 @@ class AppTheme {
       useMaterial3: true,
       fontFamily: GoogleFonts.roboto().fontFamily,
       scaffoldBackgroundColor: AppColors.background,
-      
+
       // Color Scheme
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primary,
@@ -75,7 +75,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.grey[50],
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.border),
@@ -92,7 +95,9 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.error),
         ),
-        hintStyle: AppTextStyles.body(color: AppColors.textSecondary.withValues(alpha: 0.5)),
+        hintStyle: AppTextStyles.body(
+          color: AppColors.textSecondary.withValues(alpha: 0.5),
+        ),
         labelStyle: AppTextStyles.body(color: AppColors.textPrimary),
       ),
 
@@ -101,9 +106,7 @@ class AppTheme {
         color: Colors.white,
         elevation: 2,
         shadowColor: Colors.black.withValues(alpha: 0.1),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: EdgeInsets.zero,
       ),
 

@@ -15,6 +15,8 @@ class CustomButton extends StatelessWidget {
 
   final double spacing;
   final bool iconLeading;
+  final double height;
+  final double? width;
 
   const CustomButton({
     super.key,
@@ -29,13 +31,15 @@ class CustomButton extends StatelessWidget {
     this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
     this.spacing = 8.0,
     this.iconLeading = false,
+    this.height = 56.0,
+    this.width = double.infinity,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
-      height: 56,
+      width: width,
+      height: height,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
