@@ -25,6 +25,12 @@ class SettingCard extends StatelessWidget {
   /// The color of the icon.
   final Color? iconColor;
 
+  /// Optional custom trailing widget (e.g. a Switch). If null, defaults to a chevron.
+  final Widget? trailing;
+
+  /// Optional overriding color of the title text.
+  final Color? titleColor;
+
   const SettingCard({
     super.key,
     required this.icon,
@@ -33,6 +39,8 @@ class SettingCard extends StatelessWidget {
     this.onTap,
     this.iconBackgroundColor,
     this.iconColor,
+    this.trailing,
+    this.titleColor,
   });
 
   @override
@@ -77,7 +85,7 @@ class SettingCard extends StatelessWidget {
                     Text(
                       title,
                       style: AppTextStyles.body(
-                        color: AppColors.textPrimary,
+                        color: titleColor ?? AppColors.textPrimary,
                       ).copyWith(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
@@ -93,12 +101,13 @@ class SettingCard extends StatelessWidget {
                 ),
               ),
 
-              // Trailing Chevron
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: Color(0xFFAAB2C8),
-                size: 24,
-              ),
+              // Trailing Widget or Chevron
+              trailing ??
+                  const Icon(
+                    Icons.chevron_right_rounded,
+                    color: Color(0xFFAAB2C8),
+                    size: 24,
+                  ),
             ],
           ),
         ),

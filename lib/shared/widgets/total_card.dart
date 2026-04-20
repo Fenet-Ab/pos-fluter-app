@@ -56,27 +56,35 @@ class TotalCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            title.toUpperCase(),
-            style:
-                AppTextStyles.body(
-                  color: const Color(
-                    0xFF4A4E69,
-                  ), // Matches the dark gray/blue in image
-                ).copyWith(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
-                ),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              title.toUpperCase(),
+              maxLines: 1,
+              style:
+                  AppTextStyles.body(
+                    color: const Color(
+                      0xFF4A4E69,
+                    ), // Matches the dark gray/blue in image
+                  ).copyWith(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
+            ),
           ),
           const SizedBox(height: 6),
-          Text(
-            value,
-            style: AppTextStyles.heading(
-              color:
-                  valueColor ??
-                  const Color(0xFF32B37B), // Balanced success green
-            ).copyWith(fontSize: 20, fontWeight: FontWeight.w900),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              value,
+              maxLines: 1,
+              style: AppTextStyles.heading(
+                color:
+                    valueColor ??
+                    const Color(0xFF32B37B), // Balanced success green
+              ).copyWith(fontSize: 20, fontWeight: FontWeight.w900),
+            ),
           ),
         ],
       ),
