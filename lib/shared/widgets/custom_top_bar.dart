@@ -50,6 +50,12 @@ class CustomTopBar extends StatelessWidget implements PreferredSizeWidget {
   /// Height of the top bar.
   final double height;
 
+  /// Font size for the title text. Defaults to 22.
+  final double titleFontSize;
+
+  /// Horizontal spacing between navbar items. Defaults to 4.
+  final double itemSpacing;
+
   const CustomTopBar({
     super.key,
     this.title = 'SAVVY POS',
@@ -66,6 +72,8 @@ class CustomTopBar extends StatelessWidget implements PreferredSizeWidget {
     this.backgroundColor,
     this.borderColor,
     this.height = 75,
+    this.titleFontSize = 22,
+    this.itemSpacing = 4,
   });
 
   @override
@@ -103,7 +111,7 @@ class CustomTopBar extends StatelessWidget implements PreferredSizeWidget {
                 onTap: onLeadingTap ?? () => Scaffold.of(context).openDrawer(),
               ),
 
-            const SizedBox(width: 4),
+            SizedBox(width: itemSpacing),
 
             // Logo/Title & Status
             Expanded(
@@ -114,12 +122,12 @@ class CustomTopBar extends StatelessWidget implements PreferredSizeWidget {
                     style: AppTextStyles.subHeading(color: AppColors.primary)
                         .copyWith(
                           fontWeight: FontWeight.w900,
-                          fontSize: 22,
+                          fontSize: titleFontSize,
                           letterSpacing: -0.8,
                         ),
                   ),
                   if (showStatus) ...[
-                    const SizedBox(width: 16),
+                    SizedBox(width: itemSpacing * 4),
                     _StatusIndicator(status: status),
                   ],
                 ],
