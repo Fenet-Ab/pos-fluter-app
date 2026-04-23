@@ -1,13 +1,13 @@
 import 'product_model.dart';
 
-class Cart {
+class CartItem {
   final Product product;
   final int quantity;
 
-  Cart({required this.product, this.quantity = 1});
+  CartItem({required this.product, this.quantity = 1});
 
-  factory Cart.fromJson(Map<String, dynamic> json) {
-    return Cart(
+  factory CartItem.fromJson(Map<String, dynamic> json) {
+    return CartItem(
       product: Product.fromJson(json['product']),
       quantity: json['quantity'],
     );
