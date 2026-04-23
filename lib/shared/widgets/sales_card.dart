@@ -61,61 +61,63 @@ class SalesCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Top Section: Image and Add Button
-            Stack(
-              children: [
-                // Background tinted area
-                Container(
-                  height: 180,
-                  width: double.infinity,
-                  color: const Color(0xFFE8EFFF), // Very light blue background to match image
-                  padding: const EdgeInsets.all(16),
-                  child: Center(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(4), // Slightly rounded corners for the product image
-                      child: isNetworkImage
-                          ? Image.network(
-                              imageUrl,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) => 
-                                  const Icon(Icons.broken_image, size: 50, color: Colors.grey),
-                            )
-                          : Image.asset(
-                              imageUrl,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) => 
-                                  const Icon(Icons.shopping_bag_outlined, size: 50, color: Colors.grey),
+            Expanded(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Background tinted area
+                  Container(
+                    width: double.infinity,
+                    color: const Color(0xFFE8EFFF), // Very light blue background to match image
+                    padding: const EdgeInsets.all(16),
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(4), // Slightly rounded corners for the product image
+                        child: isNetworkImage
+                            ? Image.network(
+                                imageUrl,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) => 
+                                    const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                              )
+                            : Image.asset(
+                                imageUrl,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) => 
+                                    const Icon(Icons.shopping_bag_outlined, size: 50, color: Colors.grey),
+                              ),
+                      ),
+                    ),
+                  ),
+                  // Add Button (Constant Plus Icon)
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: GestureDetector(
+                      onTap: onAddTap,
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
                             ),
-                    ),
-                  ),
-                ),
-                // Add Button (Constant Plus Icon)
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: GestureDetector(
-                    onTap: onAddTap,
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 6,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.add_circle_outline_rounded,
-                        color: AppColors.primary,
-                        size: 24,
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.add_circle_outline_rounded,
+                          color: AppColors.primary,
+                          size: 24,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
 
             // Bottom Section: Info
