@@ -6,7 +6,9 @@ import '../../shared/widgets/total_card.dart';
 import '../../shared/widgets/footer.dart';
 
 class CbeBirrScreen extends StatefulWidget {
-  const CbeBirrScreen({super.key});
+  final double totalAmount;
+
+  const CbeBirrScreen({super.key, required this.totalAmount});
 
   @override
   State<CbeBirrScreen> createState() => _CbeBirrScreenState();
@@ -14,6 +16,7 @@ class CbeBirrScreen extends StatefulWidget {
 
 class _CbeBirrScreenState extends State<CbeBirrScreen> {
   int _selectedIndex = 0;
+  bool _isProcessing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -64,18 +67,17 @@ class _CbeBirrScreenState extends State<CbeBirrScreen> {
         ),
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  child: Column(
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                child: Column(
                     children: [
                       // Total Card
-                      const TotalCard(
+                      TotalCard(
                         title: "TOTAL AMOUNT",
-                        value: "ETB 440.00",
+                        value: "ETB ${widget.totalAmount.toStringAsFixed(2)}",
                         height: 90,
                       ),
                       const SizedBox(height: 32),
@@ -132,8 +134,8 @@ class _CbeBirrScreenState extends State<CbeBirrScreen> {
                                 margin: const EdgeInsets.symmetric(horizontal: 16),
                                 width: double.infinity,
                                 height: 2,
-                                color: cbeYellow,
                                 decoration: BoxDecoration(
+                                  color: cbeYellow,
                                   boxShadow: [
                                     BoxShadow(
                                       color: cbeYellow.withOpacity(0.5),
@@ -187,8 +189,8 @@ class _CbeBirrScreenState extends State<CbeBirrScreen> {
                           ),
                           const SizedBox(height: 8),
                           Container(
-                            height: 50,
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            constraints: const BoxConstraints(minHeight: 50),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             decoration: BoxDecoration(
                               color: const Color(0xFFE9EEFF), // Light blue container
                               borderRadius: BorderRadius.circular(8),
@@ -204,6 +206,11 @@ class _CbeBirrScreenState extends State<CbeBirrScreen> {
                                 Expanded(
                                   child: TextField(
                                     keyboardType: TextInputType.phone,
+                                    onChanged: (text) {
+                                      setState(() {
+                                        _isProcessing = text.isNotEmpty;
+                                      });
+                                    },
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       hintText: "Enter Account or Phone (09...)",
@@ -226,8 +233,9 @@ class _CbeBirrScreenState extends State<CbeBirrScreen> {
                       const SizedBox(height: 48),
 
                       // Loading / Status row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      if (_isProcessing)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
                             width: 16,
@@ -251,20 +259,25 @@ class _CbeBirrScreenState extends State<CbeBirrScreen> {
                     ],
                   ),
                 ),
-              ),
             ),
             
             // Bottom Action Area
-            Container(
-              width: double.infinity,
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              child: CustomButton(
-                text: "COMPLETE",
-                backgroundColor: const Color(0xFF1B8B41), // Rich green matching the design
-                textColor: Colors.white,
-                mainAxisAlignment: MainAxisAlignment.center,
-                onPressed: () {},
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: double.infinity,
+                  color: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                  child: CustomButton(
+                    text: "COMPLETE",
+                    backgroundColor: const Color(0xFF1B8B41), // Rich green matching the design
+                    textColor: Colors.white,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    onPressed: () {},
+                  ),
+                ),
               ),
             ),
           ],

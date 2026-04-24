@@ -7,15 +7,23 @@ import '../../shared/widgets/keyboard.dart';
 import '../../shared/widgets/footer.dart';
 
 class CashScreen extends StatefulWidget {
-  const CashScreen({super.key});
+  final double totalAmount;
+
+  const CashScreen({super.key, required this.totalAmount});
 
   @override
   State<CashScreen> createState() => _CashScreenState();
 }
 
 class _CashScreenState extends State<CashScreen> {
-  String _amount = "440.00";
+  late String _amount;
   int _selectedIndex = 0; // Assuming home is active or matching others
+
+  @override
+  void initState() {
+    super.initState();
+    _amount = widget.totalAmount.toStringAsFixed(2);
+  }
 
   void _onKeyTap(String key) {
     if (key == 'CLEAR') {

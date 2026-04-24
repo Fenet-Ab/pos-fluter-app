@@ -6,7 +6,9 @@ import '../../shared/widgets/total_card.dart';
 import '../../shared/widgets/footer.dart';
 
 class TelebirrScreen extends StatefulWidget {
-  const TelebirrScreen({super.key});
+  final double totalAmount;
+
+  const TelebirrScreen({super.key, required this.totalAmount});
 
   @override
   State<TelebirrScreen> createState() => _TelebirrScreenState();
@@ -14,6 +16,7 @@ class TelebirrScreen extends StatefulWidget {
 
 class _TelebirrScreenState extends State<TelebirrScreen> {
   int _selectedIndex = 0;
+  bool _isProcessing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -61,18 +64,17 @@ class _TelebirrScreenState extends State<TelebirrScreen> {
         ),
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  child: Column(
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                child: Column(
                     children: [
                       // Total Card
-                      const TotalCard(
+                      TotalCard(
                         title: "TOTAL AMOUNT",
-                        value: "ETB 440.00",
+                        value: "ETB ${widget.totalAmount.toStringAsFixed(2)}",
                         height: 90,
                       ),
                       const SizedBox(height: 32),
@@ -180,6 +182,11 @@ class _TelebirrScreenState extends State<TelebirrScreen> {
                                 Expanded(
                                   child: TextField(
                                     keyboardType: TextInputType.phone,
+                                    onChanged: (text) {
+                                      setState(() {
+                                        _isProcessing = text.isNotEmpty;
+                                      });
+                                    },
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       hintText: "Enter Phone (e.g. 0912...)",
@@ -202,9 +209,10 @@ class _TelebirrScreenState extends State<TelebirrScreen> {
                       const SizedBox(height: 40),
 
                       // Loading / Status text
-                      Column(
-                        children: [
-                          Container(
+                      if (_isProcessing)
+                        Column(
+                          children: [
+                            Container(
                             width: 36,
                             height: 36,
                             decoration: BoxDecoration(
@@ -236,20 +244,25 @@ class _TelebirrScreenState extends State<TelebirrScreen> {
                     ],
                   ),
                 ),
-              ),
             ),
             
             // Bottom Action Area
-            Container(
-              width: double.infinity,
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              child: CustomButton(
-                text: "COMPLETE",
-                backgroundColor: const Color(0xFF1B8B41), // Rich green matching the design
-                textColor: Colors.white,
-                mainAxisAlignment: MainAxisAlignment.center,
-                onPressed: () {},
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: double.infinity,
+                  color: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                  child: CustomButton(
+                    text: "COMPLETE",
+                    backgroundColor: const Color(0xFF1B8B41), // Rich green matching the design
+                    textColor: Colors.white,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    onPressed: () {},
+                  ),
+                ),
               ),
             ),
           ],

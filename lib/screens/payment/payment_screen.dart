@@ -5,9 +5,15 @@ import '../../shared/widgets/custom_card.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../shared/widgets/footer.dart';
 import '../../core/theme/app_colors.dart';
+import 'cash_screen.dart';
+import 'telebirr_screen.dart';
+import 'cbe_screen.dart';
+import 'card_screen.dart';
 
 class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({super.key});
+  final double totalAmount;
+
+  const PaymentScreen({super.key, required this.totalAmount});
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -33,12 +39,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
       body: Column(
         children: [
           // Total Section
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: TotalCard(
-              title: 'TOTAL',
-              value: 'ETB 440.00',
-            ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TotalCard(title: 'TOTAL', value: 'ETB ${widget.totalAmount.toStringAsFixed(2)}'),
           ),
 
           // Payment Methods Grid
@@ -83,7 +86,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
               iconLeading: true,
               mainAxisAlignment: MainAxisAlignment.center,
               backgroundColor: Colors.white,
-              borderColor: const Color(0xFFE94E2A), // Matching the red outline in the image
+              borderColor: const Color(
+                0xFFE94E2A,
+              ), // Matching the red outline in the image
               textColor: const Color(0xFFE94E2A),
               iconColor: const Color(0xFFE94E2A),
               onPressed: () {
@@ -95,7 +100,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
         ],
       ),
       bottomNavigationBar: CustomFooter(
-        selectedIndex: 1, // Usually the receipt or another relevant tab depending on flow
+        selectedIndex:
+            1, // Usually the receipt or another relevant tab depending on flow
         onItemSelected: (index) {
           // Footer Navigation Logic
         },
@@ -112,12 +118,35 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return CustomCard(
       icon: icon,
       title: title,
-      borderColor: isSelected ? AppColors.primary : AppColors.border.withOpacity(0.5),
+      borderColor: isSelected
+          ? AppColors.primary
+          : AppColors.border.withOpacity(0.5),
       borderWidth: isSelected ? 1.5 : 1.0,
       onTap: () {
         setState(() {
           _selectedPaymentMethod = index;
         });
+        if (title == 'CASH') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CashScreen(totalAmount: widget.totalAmount)),
+          );
+        } else if (title == 'TELEBIRR') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => TelebirrScreen(totalAmount: widget.totalAmount)),
+          );
+        } else if (title == 'CBE BIRR') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CbeBirrScreen(totalAmount: widget.totalAmount)),
+          );
+        } else if (title == 'BANK CARD') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CardScreen(totalAmount: widget.totalAmount)),
+          );
+        }
       },
     );
   }

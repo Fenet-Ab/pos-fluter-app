@@ -6,7 +6,9 @@ import '../../shared/widgets/total_card.dart';
 import '../../shared/widgets/footer.dart';
 
 class CardScreen extends StatefulWidget {
-  const CardScreen({super.key});
+  final double totalAmount;
+
+  const CardScreen({super.key, required this.totalAmount});
 
   @override
   State<CardScreen> createState() => _CardScreenState();
@@ -14,6 +16,7 @@ class CardScreen extends StatefulWidget {
 
 class _CardScreenState extends State<CardScreen> {
   int _selectedIndex = 0;
+  bool _isProcessing = false;
 
   @override
   Widget build(BuildContext context) {
@@ -63,18 +66,17 @@ class _CardScreenState extends State<CardScreen> {
         ),
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                   child: Column(
                     children: [
                       // Total Card
-                      const TotalCard(
+                      TotalCard(
                         title: "AMOUNT RECEIVED",
-                        value: "ETB 440.00",
+                        value: "ETB ${widget.totalAmount.toStringAsFixed(2)}",
                         height: 90,
                       ),
                       const SizedBox(height: 32),
@@ -157,8 +159,8 @@ class _CardScreenState extends State<CardScreen> {
                           ),
                           const SizedBox(height: 8),
                           Container(
-                            height: 60, // Slightly taller to fit wrapped hint
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            constraints: const BoxConstraints(minHeight: 60),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             decoration: BoxDecoration(
                               color: const Color(0xFFE9EEFF), // Light blue container
                               borderRadius: BorderRadius.circular(8),
@@ -174,6 +176,11 @@ class _CardScreenState extends State<CardScreen> {
                                 Expanded(
                                   child: TextField(
                                     keyboardType: TextInputType.number,
+                                    onChanged: (text) {
+                                      setState(() {
+                                        _isProcessing = text.isNotEmpty;
+                                      });
+                                    },
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       hintText: "Enter Card Number Manually (Last Resort)",
@@ -197,60 +204,66 @@ class _CardScreenState extends State<CardScreen> {
                       const SizedBox(height: 24),
 
                       // Processing status block
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 24),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF2F5FF), // Very soft blue block
-                          borderRadius: BorderRadius.circular(16),
+                      if (_isProcessing)
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 24),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF2F5FF), // Very soft blue block
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3,
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                "PROCESSING SECURE PAYMENT...",
+                                style: AppTextStyles.subHeading(color: AppColors.primary).copyWith(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                "DO NOT REMOVE CARD",
+                                style: AppTextStyles.body(color: AppColors.textSecondary).copyWith(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 3,
-                                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              "PROCESSING SECURE PAYMENT...",
-                              style: AppTextStyles.subHeading(color: AppColors.primary).copyWith(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              "DO NOT REMOVE CARD",
-                              style: AppTextStyles.body(color: AppColors.textSecondary).copyWith(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                       const SizedBox(height: 16),
                     ],
                   ),
                 ),
-              ),
             ),
             
             // Bottom Action Area
-            Container(
-              width: double.infinity,
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              child: CustomButton(
-                text: "COMPLETE",
-                backgroundColor: const Color(0xFF1B8B41), // Rich green matching the design
-                textColor: Colors.white,
-                mainAxisAlignment: MainAxisAlignment.center,
-                onPressed: () {},
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: double.infinity,
+                  color: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                  child: CustomButton(
+                    text: "COMPLETE",
+                    backgroundColor: const Color(0xFF1B8B41), // Rich green matching the design
+                    textColor: Colors.white,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    onPressed: () {},
+                  ),
+                ),
               ),
             ),
           ],
