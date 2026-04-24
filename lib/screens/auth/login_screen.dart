@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../shared/widgets/custom_button.dart';
+import '../dashboard/dashboard_screen.dart';
+import '../../models/user_model.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,6 +15,63 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   String _pin = "";
   final int _pinLength = 6;
+
+  void _attemptLogin() {
+    if (_pin.length < _pinLength) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please enter a 6-digit PIN'),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - 150,
+            left: 20,
+            right: 20,
+          ),
+        ),
+      );
+      return;
+    }
+
+    try {
+      final user = User.dummyUsers.firstWhere((u) => u.pin == _pin);
+      // Login successful
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Welcome, ${user.name}!'),
+          duration: const Duration(seconds: 1),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - 150,
+            left: 20,
+            right: 20,
+          ),
+        ),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const DashboardScreen(),
+        ),
+      );
+    } catch (e) {
+      // Login failed
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Invalid PIN. Please try again.'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - 150,
+            left: 20,
+            right: 20,
+          ),
+        ),
+      );
+      setState(() {
+        _pin = "";
+      });
+    }
+  }
 
   void _onKeyTap(String key) {
     if (key == 'CLEAR') {
@@ -125,9 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 30),
                         child: CustomButton(
                           text: "Login",
-                          onPressed: () {
-                            // Handle login
-                          },
+                          onPressed: _attemptLogin,
                           mainAxisAlignment: MainAxisAlignment.center,
                           backgroundColor: AppColors.primary,
                         ),
