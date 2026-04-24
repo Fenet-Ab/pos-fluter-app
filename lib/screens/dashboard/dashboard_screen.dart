@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pos_application/screens/cart/cart_sale.dart';
+import 'package:pos_application/screens/refund/refund_screen.dart';
+import 'package:pos_application/models/cart_model.dart';
+import 'package:pos_application/screens/settings/settings_screen.dart';
+import 'package:pos_application/screens/user_management/user_management_screen.dart';
 import '../../shared/widgets/footer.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
@@ -8,6 +13,9 @@ import '../../shared/widgets/custom_card.dart';
 import '../../core/navigation/navigation_items.dart';
 import '../../shared/widgets/total_card.dart';
 import '../../shared/widgets/custom_button.dart';
+import '../sales/sales_screen.dart';
+import '../transaction/transaction_history_screen.dart';
+import '../reports/reports_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -64,7 +72,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 icon: Icons.add,
                 iconLeading: true,
                 mainAxisAlignment: MainAxisAlignment.center,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SalesScreen(),
+                    ),
+                  );
+                },
                 backgroundColor: AppColors.primary,
                 textColor: Colors.white,
                 height: 62,
@@ -118,32 +133,75 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   CustomCard(
                     icon: Icons.receipt_long_rounded,
                     title: "SALES HISTORY",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const TransactionHistoryScreen(),
+                        ),
+                      );
+                    },
                   ),
                   CustomCard(
                     icon: Icons.bar_chart_rounded,
                     title: "REPORTS",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ReportsScreen(),
+                        ),
+                      );
+                    },
                   ),
                   CustomCard(
                     icon: Icons.inventory_2_outlined,
                     title: "ITEMS & STOCK",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CartSaleScreen(cartItems: <CartItem>[]),
+                        ),
+                      );
+                    },
                   ),
                   CustomCard(
                     icon: Icons.reply_rounded,
                     title: "REFUND",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RefundScreen(),
+                        ),
+                      );
+                    },
                   ),
                   CustomCard(
                     icon: Icons.person_rounded,
                     title: "USERS",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const UserManagementScreen(),
+                        ),
+                      );
+                    },
                   ),
                   CustomCard(
                     icon: Icons.settings_outlined,
                     title: "SETTINGS",
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SettingsScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

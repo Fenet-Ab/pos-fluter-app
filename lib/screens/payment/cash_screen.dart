@@ -5,17 +5,26 @@ import '../../shared/widgets/custom_button.dart';
 import '../../shared/widgets/total_card.dart';
 import '../../shared/widgets/keyboard.dart';
 import '../../shared/widgets/footer.dart';
+import 'auth_screen.dart';
 
 class CashScreen extends StatefulWidget {
-  const CashScreen({super.key});
+  final double totalAmount;
+
+  const CashScreen({super.key, required this.totalAmount});
 
   @override
   State<CashScreen> createState() => _CashScreenState();
 }
 
 class _CashScreenState extends State<CashScreen> {
-  String _amount = "440.00";
+  late String _amount;
   int _selectedIndex = 0; // Assuming home is active or matching others
+
+  @override
+  void initState() {
+    super.initState();
+    _amount = widget.totalAmount.toStringAsFixed(2);
+  }
 
   void _onKeyTap(String key) {
     if (key == 'CLEAR') {
@@ -32,9 +41,9 @@ class _CashScreenState extends State<CashScreen> {
     } else {
       setState(() {
         if (_amount == "0" || _amount == "0.00") {
-           _amount = key;
+          _amount = key;
         } else {
-           _amount += key;
+          _amount += key;
         }
       });
     }
@@ -59,40 +68,28 @@ class _CashScreenState extends State<CashScreen> {
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              "CASH PAYMENT",
-              style: AppTextStyles.subHeading(color: AppColors.primary).copyWith(
-                fontWeight: FontWeight.w900,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Container(
-              width: 1,
-              height: 16,
-              color: AppColors.border,
-            ),
-            const SizedBox(width: 2),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _amount = "0.00";
-                });
-              },
-              child: Text(
-                "CLEAR",
-                style: AppTextStyles.subHeading(color: AppColors.error).copyWith(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 13,
-                ),
-              ),
-            ),
-          ],
+        title: Text(
+          "CASH PAYMENT",
+          style: AppTextStyles.subHeading(
+            color: AppColors.primary,
+          ).copyWith(fontWeight: FontWeight.w900, fontSize: 14),
         ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _amount = "0.00";
+              });
+            },
+            child: Text(
+              "CLEAR",
+              style: AppTextStyles.subHeading(
+                color: AppColors.error,
+              ).copyWith(fontWeight: FontWeight.w900, fontSize: 13),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: SafeArea(
         child: Column(
@@ -100,7 +97,10 @@ class _CashScreenState extends State<CashScreen> {
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
                   child: Column(
                     children: [
                       // Total Card
@@ -124,16 +124,14 @@ class _CashScreenState extends State<CashScreen> {
                       const SizedBox(height: 24),
 
                       // Number Pad
-                      CustomKeyboard(
-                        onKeyTap: _onKeyTap,
-                      ),
+                      CustomKeyboard(onKeyTap: _onKeyTap),
                       const SizedBox(height: 16),
                     ],
                   ),
                 ),
               ),
             ),
-            
+
             // Bottom Action Area
             Container(
               width: double.infinity,
@@ -141,10 +139,22 @@ class _CashScreenState extends State<CashScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
               child: CustomButton(
                 text: "COMPLETE",
-                backgroundColor: const Color(0xFF1B8B41), // Rich green matching the design
+                backgroundColor: const Color(
+                  0xFF1B8B41,
+                ), // Rich green matching the design
                 textColor: Colors.white,
                 mainAxisAlignment: MainAxisAlignment.center,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AuthScreen(
+                        orderId: "#SAV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}-EP",
+                        orderDate: DateTime.now(),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ],
@@ -173,15 +183,17 @@ class _CashScreenState extends State<CashScreen> {
             decoration: BoxDecoration(
               color: Colors.transparent,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppColors.primary.withOpacity(0.5), width: 1),
+              border: Border.all(
+                color: AppColors.primary.withOpacity(0.5),
+                width: 1,
+              ),
             ),
             alignment: Alignment.center,
             child: Text(
               "+$amount",
-              style: AppTextStyles.heading(color: AppColors.primary).copyWith(
-                fontSize: 16,
-                fontWeight: FontWeight.w900,
-              ),
+              style: AppTextStyles.heading(
+                color: AppColors.primary,
+              ).copyWith(fontSize: 16, fontWeight: FontWeight.w900),
             ),
           ),
         ),

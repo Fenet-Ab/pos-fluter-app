@@ -4,9 +4,12 @@ import '../../core/theme/app_text_styles.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../shared/widgets/total_card.dart';
 import '../../shared/widgets/footer.dart';
+import 'auth_screen.dart';
 
 class TelebirrScreen extends StatefulWidget {
-  const TelebirrScreen({super.key});
+  final double totalAmount;
+
+  const TelebirrScreen({super.key, required this.totalAmount});
 
   @override
   State<TelebirrScreen> createState() => _TelebirrScreenState();
@@ -14,6 +17,21 @@ class TelebirrScreen extends StatefulWidget {
 
 class _TelebirrScreenState extends State<TelebirrScreen> {
   int _selectedIndex = 0;
+  bool _isProcessing = false;
+  late final TextEditingController _phoneController;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _phoneController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,55 +45,79 @@ class _TelebirrScreenState extends State<TelebirrScreen> {
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              "TELEBIRR",
-              style: AppTextStyles.subHeading(color: AppColors.primary).copyWith(
-                fontWeight: FontWeight.w900,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Container(
-              width: 1,
-              height: 16,
-              color: AppColors.border,
-            ),
-            const SizedBox(width: 2),
-            TextButton(
-              onPressed: () {
-                // Clear action
-              },
-              child: Text(
-                "CLEAR",
-                style: AppTextStyles.subHeading(color: AppColors.error).copyWith(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 13,
-                ),
-              ),
-            ),
-          ],
+        title: Text(
+          "TELEBIRR",
+          style: AppTextStyles.subHeading(color: AppColors.primary).copyWith(
+            fontWeight: FontWeight.w900,
+            fontSize: 14,
+          ),
         ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _phoneController.clear();
+                _errorMessage = null;
+                _isProcessing = false;
+              });
+            },
+            child: Text(
+              "CLEAR",
+              style: AppTextStyles.subHeading(color: AppColors.error).copyWith(
+                fontWeight: FontWeight.w900,
+                fontSize: 13,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: SafeArea(
         child: Column(
           children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  child: Column(
+            if (_errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppColors.error.withOpacity(0.3)),
+                  ),
+                  child: Row(
                     children: [
-                      // Total Card
-                      const TotalCard(
-                        title: "TOTAL AMOUNT",
-                        value: "ETB 440.00",
-                        height: 90,
+                      const Icon(Icons.error_outline, color: AppColors.error, size: 20),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          _errorMessage!,
+                          style: AppTextStyles.body(color: AppColors.error).copyWith(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 12,
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 32),
+                    ],
+                  ),
+                ),
+              ),
+            Expanded(
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                      child: Column(
+                          children: [
+                            // Total Card
+                            TotalCard(
+                              title: "TOTAL AMOUNT",
+                              value: "ETB ${widget.totalAmount.toStringAsFixed(2)}",
+                              height: 90,
+                            ),
+                            const SizedBox(height: 32),
 
                       // QR Scanner Section
                       Text(
@@ -179,7 +221,16 @@ class _TelebirrScreenState extends State<TelebirrScreen> {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: TextField(
+                                    controller: _phoneController,
                                     keyboardType: TextInputType.phone,
+                                    onChanged: (text) {
+                                      setState(() {
+                                        _isProcessing = text.isNotEmpty;
+                                        if (text.isNotEmpty) {
+                                          _errorMessage = null;
+                                        }
+                                      });
+                                    },
                                     decoration: InputDecoration(
                                       border: InputBorder.none,
                                       hintText: "Enter Phone (e.g. 0912...)",
@@ -202,9 +253,10 @@ class _TelebirrScreenState extends State<TelebirrScreen> {
                       const SizedBox(height: 40),
 
                       // Loading / Status text
-                      Column(
-                        children: [
-                          Container(
+                      if (_isProcessing)
+                        Column(
+                          children: [
+                            Container(
                             width: 36,
                             height: 36,
                             decoration: BoxDecoration(
@@ -236,20 +288,44 @@ class _TelebirrScreenState extends State<TelebirrScreen> {
                     ],
                   ),
                 ),
-              ),
             ),
             
             // Bottom Action Area
-            Container(
-              width: double.infinity,
-              color: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-              child: CustomButton(
-                text: "COMPLETE",
-                backgroundColor: const Color(0xFF1B8B41), // Rich green matching the design
-                textColor: Colors.white,
-                mainAxisAlignment: MainAxisAlignment.center,
-                onPressed: () {},
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: double.infinity,
+                  color: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                  child: CustomButton(
+                    text: "COMPLETE",
+                    backgroundColor: const Color(0xFF1B8B41), // Rich green matching the design
+                    textColor: Colors.white,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    onPressed: () {
+                      if (_phoneController.text.isEmpty) {
+                        setState(() {
+                          _errorMessage = "ENTER PHONE NUMBER";
+                        });
+                        return;
+                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AuthScreen(
+                            orderId: "#SAV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}-EP",
+                            orderDate: DateTime.now(),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+                ],
               ),
             ),
           ],
