@@ -9,11 +9,17 @@ import 'cash_screen.dart';
 import 'telebirr_screen.dart';
 import 'cbe_screen.dart';
 import 'card_screen.dart';
+import '../../models/cart_model.dart';
 
 class PaymentScreen extends StatefulWidget {
   final double totalAmount;
+  final List<CartItem> cartItems;
 
-  const PaymentScreen({super.key, required this.totalAmount});
+  const PaymentScreen({
+    super.key,
+    required this.totalAmount,
+    this.cartItems = const [],
+  });
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -129,22 +135,34 @@ class _PaymentScreenState extends State<PaymentScreen> {
         if (title == 'CASH') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => CashScreen(totalAmount: widget.totalAmount)),
+            MaterialPageRoute(builder: (context) => CashScreen(
+              totalAmount: widget.totalAmount,
+              cartItems: widget.cartItems,
+            )),
           );
         } else if (title == 'TELEBIRR') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => TelebirrScreen(totalAmount: widget.totalAmount)),
+            MaterialPageRoute(builder: (context) => TelebirrScreen(
+              totalAmount: widget.totalAmount,
+              cartItems: widget.cartItems,
+            )),
           );
         } else if (title == 'CBE BIRR') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => CbeBirrScreen(totalAmount: widget.totalAmount)),
+            MaterialPageRoute(builder: (context) => CbeBirrScreen(
+              totalAmount: widget.totalAmount,
+              cartItems: widget.cartItems,
+            )),
           );
         } else if (title == 'BANK CARD') {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => CardScreen(totalAmount: widget.totalAmount)),
+            MaterialPageRoute(builder: (context) => CardScreen(
+              totalAmount: widget.totalAmount,
+              cartItems: widget.cartItems,
+            )),
           );
         }
       },

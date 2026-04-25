@@ -5,11 +5,17 @@ import '../../shared/widgets/custom_button.dart';
 import '../../shared/widgets/total_card.dart';
 import '../../shared/widgets/footer.dart';
 import 'auth_screen.dart';
+import '../../models/cart_model.dart';
 
 class CbeBirrScreen extends StatefulWidget {
   final double totalAmount;
+  final List<CartItem> cartItems;
 
-  const CbeBirrScreen({super.key, required this.totalAmount});
+  const CbeBirrScreen({
+    super.key,
+    required this.totalAmount,
+    this.cartItems = const [],
+  });
 
   @override
   State<CbeBirrScreen> createState() => _CbeBirrScreenState();
@@ -331,6 +337,9 @@ class _CbeBirrScreenState extends State<CbeBirrScreen> {
                                 builder: (context) => AuthScreen(
                                   orderId: "#SAV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}-EP",
                                   orderDate: DateTime.now(),
+                                  totalAmount: widget.totalAmount,
+                                  paymentMethod: "CBE Birr",
+                                  cartItems: widget.cartItems,
                                 ),
                               ),
                             );

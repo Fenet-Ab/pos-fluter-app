@@ -6,11 +6,17 @@ import '../../shared/widgets/total_card.dart';
 import '../../shared/widgets/keyboard.dart';
 import '../../shared/widgets/footer.dart';
 import 'auth_screen.dart';
+import '../../models/cart_model.dart';
 
 class CashScreen extends StatefulWidget {
   final double totalAmount;
+  final List<CartItem> cartItems;
 
-  const CashScreen({super.key, required this.totalAmount});
+  const CashScreen({
+    super.key,
+    required this.totalAmount,
+    this.cartItems = const [],
+  });
 
   @override
   State<CashScreen> createState() => _CashScreenState();
@@ -151,6 +157,9 @@ class _CashScreenState extends State<CashScreen> {
                       builder: (context) => AuthScreen(
                         orderId: "#SAV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}-EP",
                         orderDate: DateTime.now(),
+                        totalAmount: double.tryParse(_amount) ?? widget.totalAmount,
+                        paymentMethod: "Cash",
+                        cartItems: widget.cartItems,
                       ),
                     ),
                   );

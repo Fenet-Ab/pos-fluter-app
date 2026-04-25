@@ -5,11 +5,17 @@ import '../../shared/widgets/custom_button.dart';
 import '../../shared/widgets/total_card.dart';
 import '../../shared/widgets/footer.dart';
 import 'auth_screen.dart';
+import '../../models/cart_model.dart';
 
 class CardScreen extends StatefulWidget {
   final double totalAmount;
+  final List<CartItem> cartItems;
 
-  const CardScreen({super.key, required this.totalAmount});
+  const CardScreen({
+    super.key,
+    required this.totalAmount,
+    this.cartItems = const [],
+  });
 
   @override
   State<CardScreen> createState() => _CardScreenState();
@@ -414,6 +420,9 @@ class _CardScreenState extends State<CardScreen> {
                                   orderId:
                                       "#SAV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}-EP",
                                   orderDate: DateTime.now(),
+                                  totalAmount: widget.totalAmount,
+                                  paymentMethod: "Bank Card",
+                                  cartItems: widget.cartItems,
                                 ),
                               ),
                             );
