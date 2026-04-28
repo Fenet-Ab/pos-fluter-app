@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pos_application/screens/cart/cart_sale.dart';
 import '../../shared/widgets/sidebar.dart';
-import '../../screens/dashboard/dashboard_screen.dart';
-
-import '../../screens/sales/sales_screen.dart';
-import '../../screens/settings/settings_screen.dart';
-import '../../screens/user_management/user_management_screen.dart';
+import '../routes/app_routes.dart';
 
 class NavigationItems {
   static List<SidebarItem> mainItems(
@@ -22,9 +17,9 @@ class NavigationItems {
             Navigator.pop(context);
             return;
           }
-          Navigator.pushAndRemoveUntil(
+          Navigator.pushNamedAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const DashboardScreen()),
+            AppRoutes.dashboard,
             (route) => false,
           );
         },
@@ -38,12 +33,11 @@ class NavigationItems {
             Navigator.pop(context);
             return;
           }
-          Navigator.pushAndRemoveUntil(
+          Navigator.pushNamedAndRemoveUntil(
             context,
-            MaterialPageRoute(
-              builder: (context) => const CartSaleScreen(cartItems: []),
-            ),
+            AppRoutes.cart,
             (route) => false,
+            arguments: {'cartItems': []},
           );
         },
       ),
@@ -56,9 +50,9 @@ class NavigationItems {
             Navigator.pop(context);
             return;
           }
-          Navigator.pushAndRemoveUntil(
+          Navigator.pushNamedAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const SalesScreen()),
+            AppRoutes.sales,
             (route) => false,
           );
         },
@@ -72,11 +66,9 @@ class NavigationItems {
             Navigator.pop(context);
             return;
           }
-          Navigator.pushAndRemoveUntil(
+          Navigator.pushNamedAndRemoveUntil(
             context,
-            MaterialPageRoute(
-              builder: (context) => const UserManagementScreen(),
-            ),
+            AppRoutes.userManagement,
             (route) => false,
           );
         },
@@ -90,9 +82,9 @@ class NavigationItems {
             Navigator.pop(context);
             return;
           }
-          Navigator.pushAndRemoveUntil(
+          Navigator.pushNamedAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const SettingsScreen()),
+            AppRoutes.settings,
             (route) => false,
           );
         },
