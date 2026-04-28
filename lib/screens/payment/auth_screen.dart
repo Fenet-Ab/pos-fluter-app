@@ -1,18 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
-import '../success/success_screen.dart';
+import '../../core/routes/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../shared/widgets/footer.dart';
 import 'package:intl/intl.dart';
 import '../../core/utils/receipt_helper.dart';
+import '../../services/transaction_service.dart';
+import '../../models/cart_model.dart';
 
 class AuthScreen extends StatefulWidget {
   final String? orderId;
   final DateTime? orderDate;
+  final double totalAmount;
+  final String paymentMethod;
+  final List<CartItem> cartItems;
 
-  const AuthScreen({super.key, this.orderId = "#SAV-94827-EP", this.orderDate});
+  const AuthScreen({
+    super.key,
+    this.orderId,
+    this.orderDate,
+    this.totalAmount = 0.0,
+    this.paymentMethod = "Cash",
+    this.cartItems = const [],
+  });
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -312,7 +324,7 @@ class _AuthScreenState extends State<AuthScreen> {
                                             const SizedBox(height: 2),
                                             Text(
                                               (widget.orderId ??
-                                                      "#SAV-94827-EP")
+                                                      "#SAV-ONLINE-EP")
                                                   .replaceAll('-', '-\n'),
                                               style:
                                                   AppTextStyles.body(
@@ -405,22 +417,30 @@ class _AuthScreenState extends State<AuthScreen> {
       await ReceiptHelper.generateAndDownloadReceipt(
         orderId: orderId,
         orderDate: orderDate,
-        totalAmount: 417.45,
+        totalAmount: widget.totalAmount,
         signatureImage: signatureImage,
+      );
+
+      // Save the transaction to the service
+      TransactionService().saveTransaction(
+        orderId: orderId,
+        totalAmount: widget.totalAmount,
+        paymentMethod: widget.paymentMethod,
+        orderDate: orderDate,
+        items: widget.cartItems,
       );
 
       if (!mounted) return;
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SuccessScreen(
-            signatureImage: signatureImage,
-            orderId: orderId,
-            orderDate: orderDate,
-            paymentMethod: "Bank Card",
-          ),
-        ),
+      Navigator.of(context).pushNamed(
+        AppRoutes.success,
+        arguments: {
+          'signatureImage': signatureImage,
+          'orderId': orderId,
+          'orderDate': orderDate,
+          'totalAmount': widget.totalAmount,
+          'paymentMethod': widget.paymentMethod,
+        },
       );
     } catch (e) {
       if (!mounted) return;

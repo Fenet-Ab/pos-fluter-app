@@ -5,15 +5,19 @@ import '../../shared/widgets/custom_card.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../shared/widgets/footer.dart';
 import '../../core/theme/app_colors.dart';
-import 'cash_screen.dart';
-import 'telebirr_screen.dart';
-import 'cbe_screen.dart';
-import 'card_screen.dart';
+import '../../core/routes/app_routes.dart';
+
+import '../../models/cart_model.dart';
 
 class PaymentScreen extends StatefulWidget {
   final double totalAmount;
+  final List<CartItem> cartItems;
 
-  const PaymentScreen({super.key, required this.totalAmount});
+  const PaymentScreen({
+    super.key,
+    required this.totalAmount,
+    this.cartItems = const [],
+  });
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -127,24 +131,40 @@ class _PaymentScreenState extends State<PaymentScreen> {
           _selectedPaymentMethod = index;
         });
         if (title == 'CASH') {
-          Navigator.push(
+          Navigator.pushNamed(
             context,
-            MaterialPageRoute(builder: (context) => CashScreen(totalAmount: widget.totalAmount)),
+            AppRoutes.cash,
+            arguments: {
+              'totalAmount': widget.totalAmount,
+              'cartItems': widget.cartItems,
+            },
           );
         } else if (title == 'TELEBIRR') {
-          Navigator.push(
+          Navigator.pushNamed(
             context,
-            MaterialPageRoute(builder: (context) => TelebirrScreen(totalAmount: widget.totalAmount)),
+            AppRoutes.telebirr,
+            arguments: {
+              'totalAmount': widget.totalAmount,
+              'cartItems': widget.cartItems,
+            },
           );
         } else if (title == 'CBE BIRR') {
-          Navigator.push(
+          Navigator.pushNamed(
             context,
-            MaterialPageRoute(builder: (context) => CbeBirrScreen(totalAmount: widget.totalAmount)),
+            AppRoutes.cbe,
+            arguments: {
+              'totalAmount': widget.totalAmount,
+              'cartItems': widget.cartItems,
+            },
           );
         } else if (title == 'BANK CARD') {
-          Navigator.push(
+          Navigator.pushNamed(
             context,
-            MaterialPageRoute(builder: (context) => CardScreen(totalAmount: widget.totalAmount)),
+            AppRoutes.card,
+            arguments: {
+              'totalAmount': widget.totalAmount,
+              'cartItems': widget.cartItems,
+            },
           );
         }
       },

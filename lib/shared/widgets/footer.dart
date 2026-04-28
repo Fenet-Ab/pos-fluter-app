@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/routes/app_routes.dart';
 
 /// A reusable footer (bottom navigation bar) component for the SAVVY POS system.
 ///
@@ -18,10 +19,37 @@ class CustomFooter extends StatelessWidget {
     required this.onItemSelected,
   });
 
+  void _handleNavigation(BuildContext context, int index) {
+    if (index == selectedIndex) return;
+
+    String routeName;
+    switch (index) {
+      case 0:
+        routeName = AppRoutes.dashboard;
+        break;
+      case 1:
+        routeName = AppRoutes.transactionHistory;
+        break;
+      case 2:
+        routeName = AppRoutes.reports;
+        break;
+      case 3:
+        routeName = AppRoutes.settings;
+        break;
+      default:
+        return;
+    }
+
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      routeName,
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 70,
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -33,30 +61,45 @@ class CustomFooter extends StatelessWidget {
         ],
       ),
       child: SafeArea(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _FooterItem(
-              icon: Icons.home_rounded,
-              isActive: selectedIndex == 0,
-              onTap: () => onItemSelected(0),
-            ),
-            _FooterItem(
-              icon: Icons.receipt_long_rounded,
-              isActive: selectedIndex == 1,
-              onTap: () => onItemSelected(1),
-            ),
-            _FooterItem(
-              icon: Icons.bar_chart_rounded,
-              isActive: selectedIndex == 2,
-              onTap: () => onItemSelected(2),
-            ),
-            _FooterItem(
-              icon: Icons.settings_rounded,
-              isActive: selectedIndex == 3,
-              onTap: () => onItemSelected(3),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _FooterItem(
+                icon: Icons.home_rounded,
+                isActive: selectedIndex == 0,
+                onTap: () {
+                  onItemSelected(0);
+                  _handleNavigation(context, 0);
+                },
+              ),
+              _FooterItem(
+                icon: Icons.receipt_long_rounded,
+                isActive: selectedIndex == 1,
+                onTap: () {
+                  onItemSelected(1);
+                  _handleNavigation(context, 1);
+                },
+              ),
+              _FooterItem(
+                icon: Icons.bar_chart_rounded,
+                isActive: selectedIndex == 2,
+                onTap: () {
+                  onItemSelected(2);
+                  _handleNavigation(context, 2);
+                },
+              ),
+              _FooterItem(
+                icon: Icons.settings_rounded,
+                isActive: selectedIndex == 3,
+                onTap: () {
+                  onItemSelected(3);
+                  _handleNavigation(context, 3);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

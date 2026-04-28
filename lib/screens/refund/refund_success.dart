@@ -3,9 +3,13 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../shared/widgets/footer.dart';
+import '../../core/utils/receipt_helper.dart';
+
+import '../../models/order_model.dart';
 
 class RefundSuccessScreen extends StatefulWidget {
-  const RefundSuccessScreen({super.key});
+  final Order? order;
+  const RefundSuccessScreen({super.key, this.order});
 
   @override
   State<RefundSuccessScreen> createState() => _RefundSuccessScreenState();
@@ -68,7 +72,7 @@ class _RefundSuccessScreenState extends State<RefundSuccessScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "REFERENCE ID: #SAV-94827-EP",
+                      "REFERENCE ID: ${widget.order?.id ?? '#SAV-94827-EP'}",
                       style: AppTextStyles.body(color: Colors.white.withOpacity(0.9)).copyWith(
                         fontSize: 12,
                         letterSpacing: 0.5,
@@ -138,7 +142,7 @@ class _RefundSuccessScreenState extends State<RefundSuccessScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  "ETB 110.00",
+                                  "ETB ${widget.order?.totalAmount.toStringAsFixed(2) ?? '110.00'}",
                                   style: AppTextStyles.heading(color: AppColors.textPrimary).copyWith(
                                     fontSize: 28,
                                     fontWeight: FontWeight.w900,
@@ -147,12 +151,16 @@ class _RefundSuccessScreenState extends State<RefundSuccessScreen> {
                                 const SizedBox(height: 24),
                                 
                                 // Row details
-                                _buildDetailRow("Method", "Telebirr"),
+                                _buildDetailRow("Method", widget.order?.paymentMethod ?? "Telebirr"),
                                 const SizedBox(height: 16),
                                 _buildDetailRow(
                                   "Items Returned", 
-                                  "1x Habesha Beer", 
-                                  detail: "(Bottle)",
+                                  widget.order != null && widget.order!.items.isNotEmpty 
+                                      ? "${widget.order!.items.length}x ${widget.order!.items.first.product.name}"
+                                      : "1x Habesha Beer", 
+                                  detail: widget.order != null && widget.order!.items.isNotEmpty && widget.order!.items.length > 1 
+                                      ? "+${widget.order!.items.length - 1} more items"
+                                      : "(Bottle)",
                                 ),
                                 
                                 const SizedBox(height: 32),
@@ -189,7 +197,17 @@ class _RefundSuccessScreenState extends State<RefundSuccessScreen> {
                             textColor: AppColors.primary,
                             borderColor: AppColors.primary,
                             borderWidth: 1.5,
-                            onPressed: () {},
+                            onPressed: () async {
+                              if (widget.order != null) {
+                                await ReceiptHelper.shareReceipt(
+                                  orderId: widget.order!.id,
+                                  orderDate: widget.order!.orderDate,
+                                  totalAmount: widget.order!.totalAmount,
+                                  signatureImage: null,
+                                  title: 'REFUND DIGITAL RECEIPT',
+                                );
+                              }
+                            },
                             mainAxisAlignment: MainAxisAlignment.center,
                           ),
                           const SizedBox(height: 16),
@@ -199,7 +217,17 @@ class _RefundSuccessScreenState extends State<RefundSuccessScreen> {
                             iconLeading: true,
                             backgroundColor: AppColors.primary,
                             textColor: Colors.white,
-                            onPressed: () {},
+                            onPressed: () async {
+                              if (widget.order != null) {
+                                await ReceiptHelper.generateAndDownloadReceipt(
+                                  orderId: widget.order!.id,
+                                  orderDate: widget.order!.orderDate,
+                                  totalAmount: widget.order!.totalAmount,
+                                  signatureImage: null,
+                                  title: 'REFUND RECEIPT',
+                                );
+                              }
+                            },
                             mainAxisAlignment: MainAxisAlignment.center,
                           ),
                           const SizedBox(height: 32),

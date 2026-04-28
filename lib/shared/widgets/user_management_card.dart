@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_text_styles.dart';
+import 'user_form_dialog.dart';
 
 /// A reusable user management card component matching the SAVVY POS design.
 ///
@@ -13,23 +13,43 @@ class UserManagementCard extends StatelessWidget {
   /// The role of the user (e.g., Manager, Cashier).
   final String role;
 
-  /// Callback when the edit button is tapped.
-  final VoidCallback? onEdit;
+  /// The phone number (not visible on card, but used in form).
+  final String? phone;
 
-  /// Callback when the more options button is tapped.
-  final VoidCallback? onMore;
+  /// The email address (not visible on card, but used in form).
+  final String? email;
 
-  /// The icon to display for more options (defaults to more_vert).
-  final IconData moreIcon;
+  /// Callback when a user is updated.
+  final Function(String name, String role, String phone, String email)? onUpdate;
+
+  /// Callback when a user is deleted.
+  final VoidCallback? onDelete;
 
   const UserManagementCard({
     super.key,
     required this.name,
     required this.role,
-    this.onEdit,
-    this.onMore,
-    this.moreIcon = Icons.more_vert_rounded,
+    this.phone,
+    this.email,
+    this.onUpdate,
+    this.onDelete,
   });
+
+  void _showEditDialog(BuildContext context) {
+    UserFormDialog.show(
+      context,
+      title: "Edit User",
+      initialName: name,
+      initialRole: role,
+      initialPhone: phone,
+      initialEmail: email,
+      onSave: (newName, newRole, newPhone, newEmail) {
+        if (onUpdate != null) {
+          onUpdate!(newName, newRole, newPhone, newEmail);
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,21 +58,14 @@ class UserManagementCard extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.border.withOpacity(0.5),
+          color: const Color(0xFFE2E8F0), // Lighter border
           width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Row(
         children: [
@@ -60,16 +73,15 @@ class UserManagementCard extends StatelessWidget {
           Container(
             width: 52,
             height: 52,
-            decoration: BoxDecoration(
-              color: const Color(0xFFE9EEFF), // Light blue background
+            decoration: const BoxDecoration(
+              color: Color(0xFFE9F0FF), // Soft light blue
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
             child: Text(
               initial,
-              style: AppTextStyles.subHeading(
-                color: AppColors.primary,
-              ).copyWith(
+              style: const TextStyle(
+                color: Color(0xFF1A60D1), // Specific blue for initial
                 fontWeight: FontWeight.w900,
                 fontSize: 22,
               ),
@@ -86,14 +98,15 @@ class UserManagementCard extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: AppTextStyles.body(
-                    color: AppColors.textPrimary,
-                  ).copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xFF434654), // Dark grey from image
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
                 _RoleChip(role: role),
               ],
             ),
@@ -104,21 +117,41 @@ class UserManagementCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                onPressed: onEdit,
+                onPressed: () => _showEditDialog(context),
                 icon: const Icon(Icons.edit_outlined),
-                color: const Color(0xFFAAB2C8),
-                iconSize: 24,
+                color: const Color(0xFFAAB2C8), // Light grey icons
+                iconSize: 22,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
               ),
-              const SizedBox(width: 20),
-              IconButton(
-                onPressed: onMore,
-                icon: Icon(moreIcon),
-                color: const Color(0xFFAAB2C8),
-                iconSize: 24,
+              const SizedBox(width: 16),
+              PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'delete' && onDelete != null) {
+                    onDelete!();
+                  }
+                },
+                icon: const Icon(Icons.more_vert_rounded),
+                color: Colors.white,
+                elevation: 4,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
+                iconColor: const Color(0xFFAAB2C8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete_outline, color: AppColors.error, size: 20),
+                        SizedBox(width: 8),
+                        Text('Delete', style: TextStyle(color: AppColors.error)),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -136,17 +169,18 @@ class _RoleChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFFE9EEFF), // Light blue background for chip
+        color: const Color(0xFFE9F0FF), // Same light blue as avatar
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         role,
-        style: AppTextStyles.body(
-          color: AppColors.primary,
-        ).copyWith(
-          fontSize: 13,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(
+          color: Color(0xFF1A60D1), // Same blue as initial
+          fontSize: 12,
           fontWeight: FontWeight.w600,
         ),
       ),

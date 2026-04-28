@@ -3,7 +3,7 @@ import '../../shared/widgets/custom_button.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 
-import '../auth/login_screen.dart';
+import '../../core/routes/app_routes.dart';
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});
@@ -22,9 +22,9 @@ class LandingScreen extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.pushNamed(
                       context,
-                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      AppRoutes.login,
                     );
                   },
                   child: Text(
@@ -67,9 +67,9 @@ class LandingScreen extends StatelessWidget {
                 text: 'Next',
                 icon: Icons.arrow_forward_rounded,
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    AppRoutes.login,
                   );
                 },
               ),

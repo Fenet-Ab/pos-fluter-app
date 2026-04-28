@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../shared/widgets/custom_top_bar.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../shared/widgets/total_card.dart';
 import '../../shared/widgets/keyboard.dart';
+import '../../models/order_model.dart';
+import '../../services/transaction_service.dart';
+import '../../core/routes/app_routes.dart';
 
 class RefundAuthScreen extends StatefulWidget {
-  const RefundAuthScreen({super.key});
+  final Order order;
+
+  const RefundAuthScreen({super.key, required this.order});
 
   @override
   State<RefundAuthScreen> createState() => _RefundAuthScreenState();
@@ -40,43 +46,42 @@ class _RefundAuthScreenState extends State<RefundAuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF4F6FC),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
+      appBar: CustomTopBar(
+        title: 'AUTHORIZE REFUND',
+        showStatus: false,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(
+        leadingIcon: Icons.arrow_back,
+        onLeadingTap: () => Navigator.pop(context),
+        trailing: Row(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              "AUTHORIZE REFUND",
-              style: AppTextStyles.subHeading(color: AppColors.primary).copyWith(
-                fontWeight: FontWeight.w900,
-                fontSize: 16,
+              '|',
+              style: TextStyle(
+                color: Colors.grey.withOpacity(0.4),
+                fontSize: 14,
+                fontWeight: FontWeight.w300,
               ),
             ),
-            const SizedBox(width: 12),
-            Container(
-              width: 1,
-              height: 20,
-              color: AppColors.border,
-            ),
-            const SizedBox(width: 4),
             TextButton(
               onPressed: () {
                 setState(() {
                   _pin = "";
                 });
               },
-              child: Text(
-                "CLEAR",
-                style: AppTextStyles.subHeading(color: AppColors.error).copyWith(
-                  fontWeight: FontWeight.w900,
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: const Text(
+                'CLEAR',
+                style: TextStyle(
+                  color: Color(0xFFE94E2A),
+                  fontWeight: FontWeight.bold,
                   fontSize: 14,
+                  letterSpacing: 0.5,
                 ),
               ),
             ),
@@ -89,30 +94,32 @@ class _RefundAuthScreenState extends State<RefundAuthScreen> {
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 24.0,
+                  ),
                   child: Column(
                     children: [
-                      const TotalCard(
+                      TotalCard(
                         title: 'TOTAL',
-                        value: 'ETB 417.45',
+                        value:
+                            'ETB ${widget.order.totalAmount.toStringAsFixed(2)}',
                         height: 90,
                       ),
                       const SizedBox(height: 32),
                       Text(
                         "Manager PIN Required",
-                        style: AppTextStyles.heading(color: AppColors.textPrimary).copyWith(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                        ),
+                        style: AppTextStyles.heading(
+                          color: AppColors.textPrimary,
+                        ).copyWith(fontSize: 22, fontWeight: FontWeight.w900),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         "Enter 6-digit code to authorize the return of\nfunds.",
                         textAlign: TextAlign.center,
-                        style: AppTextStyles.body(color: AppColors.textSecondary).copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: AppTextStyles.body(
+                          color: AppColors.textSecondary,
+                        ).copyWith(fontSize: 14, fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: 32),
                       Row(
@@ -125,19 +132,21 @@ class _RefundAuthScreenState extends State<RefundAuthScreen> {
                             height: 18,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: isFilled ? AppColors.primary : Colors.transparent,
-                              border: isFilled ? null : Border.all(
-                                color: AppColors.border,
-                                width: 1.5,
-                              ),
+                              color: isFilled
+                                  ? AppColors.primary
+                                  : Colors.transparent,
+                              border: isFilled
+                                  ? null
+                                  : Border.all(
+                                      color: AppColors.border,
+                                      width: 1.5,
+                                    ),
                             ),
                           );
                         }),
                       ),
                       const SizedBox(height: 48),
-                      CustomKeyboard(
-                        onKeyTap: _onKeyTap,
-                      ),
+                      CustomKeyboard(onKeyTap: _onKeyTap),
                       const SizedBox(height: 24),
                     ],
                   ),
@@ -151,9 +160,28 @@ class _RefundAuthScreenState extends State<RefundAuthScreen> {
               child: CustomButton(
                 text: "AUTHORIZE & PAYOUT",
                 onPressed: () {
-                  // Perform authorize action
+                  if (_pin.length == _pinLength) {
+                    if (_pin == "123456") {
+                      // Update transaction status
+                      TransactionService().refundOrder(widget.order.id);
+                      
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.refundSuccess,
+                        arguments: {'order': widget.order},
+                      );
+                    } else {
+                      Navigator.pushNamed(
+                        context,
+                        AppRoutes.refundError,
+                        arguments: {'order': widget.order},
+                      );
+                   }
+                  }
                 },
-                backgroundColor: const Color(0xFF2DCC70), // Slightly brighter green to match the image
+                backgroundColor: const Color(
+                  0xFF2DCC70,
+                ), // Slightly brighter green to match the image
                 textColor: Colors.white,
                 mainAxisAlignment: MainAxisAlignment.center,
               ),

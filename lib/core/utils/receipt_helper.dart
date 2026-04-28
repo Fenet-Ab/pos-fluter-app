@@ -10,6 +10,7 @@ class ReceiptHelper {
     required DateTime orderDate,
     required double totalAmount,
     required Uint8List? signatureImage,
+    String title = 'OFFICIAL RECEIPT',
   }) async {
     final pdf = pw.Document();
 
@@ -29,7 +30,7 @@ class ReceiptHelper {
                     pw.Text('SAVVY POS', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 24)),
                     pw.Text('Addis Ababa, Ethiopia', style: pw.TextStyle(fontSize: 10)),
                     pw.SizedBox(height: 10),
-                    pw.Text('OFFICIAL RECEIPT', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                    pw.Text(title, style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                   ],
                 ),
               ),
@@ -67,7 +68,57 @@ class ReceiptHelper {
     // This will open the print/save dialog on Mobile and Web
     await Printing.layoutPdf(
       onLayout: (PdfPageFormat format) async => pdf.save(),
-      name: 'receipt_$orderId.pdf',
+      name: '${title.replaceAll(' ', '_').toLowerCase()}_$orderId.pdf',
+    );
+  }
+
+  static Future<void> shareReceipt({
+    required String orderId,
+    required DateTime orderDate,
+    required double totalAmount,
+    required Uint8List? signatureImage,
+    String title = 'DIGITAL RECEIPT',
+  }) async {
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.roll80,
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Center(
+                child: pw.Text('SAVVY POS', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 24)),
+              ),
+              pw.SizedBox(height: 10),
+              pw.Center(
+                child: pw.Text(title, style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              ),
+              pw.Divider(),
+              pw.Text('Order ID: $orderId'),
+              pw.Text('Date: ${DateFormat('MMMM dd, yyyy').format(orderDate)}'),
+              pw.Divider(),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('TOTAL'),
+                  pw.Text('ETB ${totalAmount.toStringAsFixed(2)}'),
+                ],
+              ),
+              pw.SizedBox(height: 20),
+              if (signatureImage != null)
+                pw.Center(child: pw.Image(pw.MemoryImage(signatureImage), height: 40)),
+              pw.Center(child: pw.Text('Thank you!')),
+            ],
+          );
+        },
+      ),
+    );
+
+    await Printing.sharePdf(
+      bytes: await pdf.save(),
+      filename: 'receipt_$orderId.pdf',
     );
   }
 }

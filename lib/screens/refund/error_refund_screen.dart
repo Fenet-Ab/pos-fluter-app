@@ -4,8 +4,11 @@ import '../../core/theme/app_text_styles.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../shared/widgets/footer.dart';
 
+import '../../models/order_model.dart';
+
 class ErrorRefundScreen extends StatefulWidget {
-  const ErrorRefundScreen({super.key});
+  final Order? order;
+  const ErrorRefundScreen({super.key, this.order});
 
   @override
   State<ErrorRefundScreen> createState() => _ErrorRefundScreenState();
@@ -58,7 +61,7 @@ class _ErrorRefundScreenState extends State<ErrorRefundScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "Reference: #RF-ERR-503",
+                  "Reference: ${widget.order?.id ?? '#RF-ERR-503'}",
                   style: AppTextStyles.body(color: Colors.white.withOpacity(0.9)).copyWith(
                     fontSize: 12,
                     letterSpacing: 0.5,
