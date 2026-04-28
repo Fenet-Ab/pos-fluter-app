@@ -62,7 +62,7 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const SalesScreen());
       case cart:
         final args = routeSettings.arguments as Map<String, dynamic>?;
-        final cartItems = args?['cartItems'] as List<CartItem>? ?? [];
+        final cartItems = (args?['cartItems'] as List?)?.cast<CartItem>() ?? [];
         return MaterialPageRoute(
           builder: (_) => CartSaleScreen(cartItems: cartItems),
         );
@@ -71,7 +71,7 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => PaymentScreen(
             totalAmount: args['totalAmount'],
-            cartItems: args['cartItems'] ?? [],
+            cartItems: (args['cartItems'] as List?)?.cast<CartItem>() ?? [],
           ),
         );
       case cash:
@@ -79,7 +79,7 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => CashScreen(
             totalAmount: args['totalAmount'],
-            cartItems: args['cartItems'] ?? [],
+            cartItems: (args['cartItems'] as List?)?.cast<CartItem>() ?? [],
           ),
         );
       case telebirr:
@@ -87,7 +87,7 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => TelebirrScreen(
             totalAmount: args['totalAmount'],
-            cartItems: args['cartItems'] ?? [],
+            cartItems: (args['cartItems'] as List?)?.cast<CartItem>() ?? [],
           ),
         );
       case cbe:
@@ -95,7 +95,7 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => CbeBirrScreen(
             totalAmount: args['totalAmount'],
-            cartItems: args['cartItems'] ?? [],
+            cartItems: (args['cartItems'] as List?)?.cast<CartItem>() ?? [],
           ),
         );
       case card:
@@ -103,7 +103,7 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => CardScreen(
             totalAmount: args['totalAmount'],
-            cartItems: args['cartItems'] ?? [],
+            cartItems: (args['cartItems'] as List?)?.cast<CartItem>() ?? [],
           ),
         );
       case success:
@@ -128,7 +128,16 @@ class AppRoutes {
       case refund:
         return MaterialPageRoute(builder: (_) => const RefundScreen());
       case auth:
-        return MaterialPageRoute(builder: (_) => const AuthScreen());
+        final args = routeSettings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => AuthScreen(
+            orderId: args['orderId'],
+            orderDate: args['orderDate'],
+            totalAmount: args['totalAmount'],
+            paymentMethod: args['paymentMethod'],
+            cartItems: (args['cartItems'] as List?)?.cast<CartItem>() ?? [],
+          ),
+        );
       case refundAuth:
         final args = routeSettings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
