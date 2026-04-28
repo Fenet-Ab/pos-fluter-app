@@ -5,6 +5,10 @@ import '../../shared/widgets/custom_button.dart';
 import '../../shared/widgets/refund_card.dart';
 import '../../shared/widgets/footer.dart';
 import '../../core/theme/app_colors.dart';
+import '../../services/transaction_service.dart';
+import 'package:intl/intl.dart';
+import '../../models/order_model.dart';
+import '../../core/routes/app_routes.dart';
 
 class RefundScreen extends StatefulWidget {
   const RefundScreen({super.key});
@@ -16,38 +20,13 @@ class RefundScreen extends StatefulWidget {
 class _RefundScreenState extends State<RefundScreen> {
   int _selectedRefundIndex = 0; // The first item is selected in the image
 
-  final List<Map<String, dynamic>> _recentTransactions = [
-    {
-      'orderId': '#SAV-94827-EP',
-      'amount': 417.45,
-      'paymentMethod': 'Telebirr',
-      'time': '12:15 PM',
-    },
-    {
-      'orderId': '#SAV-94812-TX',
-      'amount': 417.45,
-      'paymentMethod': 'Cash',
-      'time': '12:15 PM',
-    },
-    {
-      'orderId': '#SAV-94812-TX',
-      'amount': 417.45,
-      'paymentMethod': 'Cash',
-      'time': '12:15 PM',
-    },
-    {
-      'orderId': '#SAV-94812-TX',
-      'amount': 417.45,
-      'paymentMethod': 'Cash',
-      'time': '12:15 PM',
-    },
-    {
-      'orderId': '#SAV-94812-TX',
-      'amount': 417.45,
-      'paymentMethod': 'Cash',
-      'time': '12:15 PM',
-    },
-  ];
+  List<Order> _transactions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _transactions = TransactionService().getRecentTransactions();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +35,7 @@ class _RefundScreenState extends State<RefundScreen> {
       appBar: CustomTopBar(
         title: 'REFUND',
         showStatus: false,
+        centerTitle: true,
         leadingIcon: Icons.arrow_back,
         onLeadingTap: () {
           Navigator.pop(context);
@@ -64,24 +44,29 @@ class _RefundScreenState extends State<RefundScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              height: 20,
-              width: 1,
-              color: Colors.grey.withOpacity(0.4),
+            Text(
+              '|',
+              style: TextStyle(
+                color: Colors.grey.withOpacity(0.4),
+                fontSize: 20,
+                fontWeight: FontWeight.w300,
+              ),
             ),
             TextButton(
               onPressed: () {
-                // Clear action
+                // Clear action logic here
               },
               style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: const Text(
                 'CLEAR',
                 style: TextStyle(
-                  color: Color(0xFFE94E2A), // Red color seen in the 'CLEAR' text
+                  color: Color(0xFFE94E2A),
                   fontWeight: FontWeight.bold,
-                  fontSize: 15,
+                  fontSize: 14,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -161,21 +146,42 @@ class _RefundScreenState extends State<RefundScreen> {
 
           // Transactions List
           Expanded(
-            child: ListView.builder(
+            child: _transactions.isEmpty 
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.history, size: 64, color: Colors.grey[300]),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No recent transactions found',
+                        style: TextStyle(color: Colors.grey[500], fontSize: 16),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: _recentTransactions.length,
+              itemCount: _transactions.length,
               itemBuilder: (context, index) {
-                final transaction = _recentTransactions[index];
+                final transaction = _transactions[index];
                 return RefundCard(
-                  orderId: transaction['orderId'],
-                  amount: transaction['amount'],
-                  paymentMethod: transaction['paymentMethod'],
-                  time: transaction['time'],
+                  orderId: transaction.id,
+                  amount: transaction.totalAmount,
+                  paymentMethod: transaction.paymentMethod,
+                  time: DateFormat('hh:mm a').format(transaction.orderDate),
                   isSelected: _selectedRefundIndex == index,
                   onTap: () {
                     setState(() {
                       _selectedRefundIndex = index;
                     });
+                    
+                    // Navigate to Refund Auth
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.refundAuth,
+                      arguments: {'order': transaction},
+                    );
                   },
                 );
               },

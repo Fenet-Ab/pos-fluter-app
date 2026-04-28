@@ -5,7 +5,7 @@ import '../../shared/widgets/custom_button.dart';
 import '../../shared/widgets/footer.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
-import '../payment/payment_screen.dart';
+import '../../core/routes/app_routes.dart';
 
 import '../../models/cart_model.dart';
 
@@ -37,7 +37,15 @@ class _CartSaleScreenState extends State<CartSaleScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.primary),
           onPressed: () {
-            Navigator.pop(context);
+            if (Navigator.of(context).canPop()) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                AppRoutes.dashboard,
+                (route) => false,
+              );
+            }
           },
         ),
         centerTitle: true,
@@ -134,9 +142,13 @@ class _CartSaleScreenState extends State<CartSaleScreen> {
               text: 'COMPLETE PAYMENT',
               mainAxisAlignment: MainAxisAlignment.center,
               onPressed: () {
-                Navigator.push(
+                Navigator.pushNamed(
                   context,
-                  MaterialPageRoute(builder: (context) => const PaymentScreen()),
+                  AppRoutes.payment,
+                  arguments: {
+                    'totalAmount': _totalAmount,
+                    'cartItems': widget.cartItems,
+                  },
                 );
               },
             ),

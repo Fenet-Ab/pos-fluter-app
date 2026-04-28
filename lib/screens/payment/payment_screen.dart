@@ -5,10 +5,8 @@ import '../../shared/widgets/custom_card.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../shared/widgets/footer.dart';
 import '../../core/theme/app_colors.dart';
-import 'cash_screen.dart';
-import 'telebirr_screen.dart';
-import 'cbe_screen.dart';
-import 'card_screen.dart';
+import '../../core/routes/app_routes.dart';
+
 import '../../models/cart_model.dart';
 
 class PaymentScreen extends StatefulWidget {
@@ -133,36 +131,40 @@ class _PaymentScreenState extends State<PaymentScreen> {
           _selectedPaymentMethod = index;
         });
         if (title == 'CASH') {
-          Navigator.push(
+          Navigator.pushNamed(
             context,
-            MaterialPageRoute(builder: (context) => CashScreen(
-              totalAmount: widget.totalAmount,
-              cartItems: widget.cartItems,
-            )),
+            AppRoutes.cash,
+            arguments: {
+              'totalAmount': widget.totalAmount,
+              'cartItems': widget.cartItems,
+            },
           );
         } else if (title == 'TELEBIRR') {
-          Navigator.push(
+          Navigator.pushNamed(
             context,
-            MaterialPageRoute(builder: (context) => TelebirrScreen(
-              totalAmount: widget.totalAmount,
-              cartItems: widget.cartItems,
-            )),
+            AppRoutes.telebirr,
+            arguments: {
+              'totalAmount': widget.totalAmount,
+              'cartItems': widget.cartItems,
+            },
           );
         } else if (title == 'CBE BIRR') {
-          Navigator.push(
+          Navigator.pushNamed(
             context,
-            MaterialPageRoute(builder: (context) => CbeBirrScreen(
-              totalAmount: widget.totalAmount,
-              cartItems: widget.cartItems,
-            )),
+            AppRoutes.cbe,
+            arguments: {
+              'totalAmount': widget.totalAmount,
+              'cartItems': widget.cartItems,
+            },
           );
         } else if (title == 'BANK CARD') {
-          Navigator.push(
+          Navigator.pushNamed(
             context,
-            MaterialPageRoute(builder: (context) => CardScreen(
-              totalAmount: widget.totalAmount,
-              cartItems: widget.cartItems,
-            )),
+            AppRoutes.card,
+            arguments: {
+              'totalAmount': widget.totalAmount,
+              'cartItems': widget.cartItems,
+            },
           );
         }
       },

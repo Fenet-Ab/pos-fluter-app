@@ -6,8 +6,10 @@ import '../../shared/widgets/footer.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../models/product_model.dart';
-import '../cart/cart_sale.dart';
+import '../../core/routes/app_routes.dart';
 import '../../models/cart_model.dart';
+import '../../shared/widgets/sidebar.dart';
+import '../../core/navigation/navigation_items.dart';
 
 class SalesScreen extends StatefulWidget {
   const SalesScreen({super.key});
@@ -47,19 +49,20 @@ class _SalesScreenState extends State<SalesScreen> {
         title: 'SAVVY POS',
         centerTitle: true,
         showStatus: false,
-        leadingIcon: Icons.arrow_back,
         trailingIcon: Icons.shopping_cart,
         trailingBadgeCount: _cartItemCount,
-        onLeadingTap: () {
-          Navigator.pop(context);
-        },
         onTrailingTap: () async {
-          await Navigator.push(
+          await Navigator.pushNamed(
             context,
-            MaterialPageRoute(builder: (context) => CartSaleScreen(cartItems: _cartItems)),
+            AppRoutes.cart,
+            arguments: {'cartItems': _cartItems},
           );
           setState(() {});
         },
+      ),
+      drawer: Sidebar(
+        selectedId: 'products',
+        items: NavigationItems.mainItems(context, activeId: 'products'),
       ),
       body: Column(
         children: [

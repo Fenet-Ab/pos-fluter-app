@@ -42,7 +42,7 @@ class TotalCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: height,
+      constraints: height != null ? BoxConstraints(minHeight: height!) : null,
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       decoration: BoxDecoration(
         color: backgroundColor ?? const Color(0xFFE9EEFF),

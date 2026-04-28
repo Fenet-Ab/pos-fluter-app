@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pos_application/screens/cart/cart_sale.dart';
-import 'package:pos_application/screens/refund/refund_screen.dart';
-import 'package:pos_application/models/cart_model.dart';
-import 'package:pos_application/screens/settings/settings_screen.dart';
-import 'package:pos_application/screens/user_management/user_management_screen.dart';
 import '../../shared/widgets/footer.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
@@ -13,12 +8,15 @@ import '../../shared/widgets/custom_card.dart';
 import '../../core/navigation/navigation_items.dart';
 import '../../shared/widgets/total_card.dart';
 import '../../shared/widgets/custom_button.dart';
-import '../sales/sales_screen.dart';
-import '../transaction/transaction_history_screen.dart';
-import '../reports/reports_screen.dart';
+import '../../models/user_model.dart';
+import '../../services/transaction_service.dart';
+import 'package:intl/intl.dart';
+import 'package:pos_application/models/cart_model.dart';
+import '../../core/routes/app_routes.dart';
 
 class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+  final User? user;
+  const DashboardScreen({super.key, this.user});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -26,6 +24,18 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
+
+  double get _todayRevenue {
+    final transactions = TransactionService().getRecentTransactions();
+    return transactions
+        .where((o) => o.status.toLowerCase() == 'completed')
+        .fold(0, (sum, item) => sum + item.totalAmount);
+  }
+
+  int get _activeOrders {
+    // For now, let's say active orders are 'Completed' in the last 24h
+    return TransactionService().getRecentTransactions().length;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +66,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               // Welcome Text
               Center(
                 child: Text(
-                  "Welcome, Cashier 01",
+                  "Welcome, ${widget.user?.name ?? 'Cashier 01'}",
                   style: AppTextStyles.body().copyWith(
                     color: const Color(0xFF8E92A8),
                     fontSize: 16,
@@ -73,11 +83,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 iconLeading: true,
                 mainAxisAlignment: MainAxisAlignment.center,
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const SalesScreen(),
-                    ),
+                    AppRoutes.sales,
                   );
                 },
                 backgroundColor: AppColors.primary,
@@ -94,7 +102,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Expanded(
                       child: TotalCard(
                         title: "TODAY'S REVENUE",
-                        value: "ETB 1,240.00",
+                        value: "ETB ${NumberFormat('#,##0.00').format(_todayRevenue)}",
                         backgroundColor: Colors.white,
                         valueColor: AppColors.success,
                         borderColor: AppColors.secondary.withOpacity(
@@ -107,7 +115,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Expanded(
                       child: TotalCard(
                         title: "ACTIVE ORDERS",
-                        value: "12",
+                        value: _activeOrders.toString(),
                         backgroundColor: Colors.white,
                         valueColor: AppColors.success,
                         borderColor: AppColors.secondary.withOpacity(
@@ -134,12 +142,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     icon: Icons.receipt_long_rounded,
                     title: "SALES HISTORY",
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushNamed(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const TransactionHistoryScreen(),
-                        ),
+                        AppRoutes.transactionHistory,
                       );
                     },
                   ),
@@ -147,11 +152,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     icon: Icons.bar_chart_rounded,
                     title: "REPORTS",
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushNamed(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const ReportsScreen(),
-                        ),
+                        AppRoutes.reports,
                       );
                     },
                   ),
@@ -159,11 +162,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     icon: Icons.inventory_2_outlined,
                     title: "ITEMS & STOCK",
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushNamed(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => CartSaleScreen(cartItems: <CartItem>[]),
-                        ),
+                        AppRoutes.cart,
+                        arguments: {'cartItems': <CartItem>[]},
                       );
                     },
                   ),
@@ -171,11 +173,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     icon: Icons.reply_rounded,
                     title: "REFUND",
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushNamed(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const RefundScreen(),
-                        ),
+                        AppRoutes.refund,
                       );
                     },
                   ),
@@ -183,11 +183,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     icon: Icons.person_rounded,
                     title: "USERS",
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushNamed(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const UserManagementScreen(),
-                        ),
+                        AppRoutes.userManagement,
                       );
                     },
                   ),
@@ -195,11 +193,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     icon: Icons.settings_outlined,
                     title: "SETTINGS",
                     onTap: () {
-                      Navigator.push(
+                      Navigator.pushNamed(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => const SettingsScreen(),
-                        ),
+                        AppRoutes.settings,
                       );
                     },
                   ),

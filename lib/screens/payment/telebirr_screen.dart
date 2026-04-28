@@ -4,7 +4,7 @@ import '../../core/theme/app_text_styles.dart';
 import '../../shared/widgets/custom_button.dart';
 import '../../shared/widgets/total_card.dart';
 import '../../shared/widgets/footer.dart';
-import 'auth_screen.dart';
+import '../../core/routes/app_routes.dart';
 import '../../models/cart_model.dart';
 
 class TelebirrScreen extends StatefulWidget {
@@ -317,17 +317,16 @@ class _TelebirrScreenState extends State<TelebirrScreen> {
                         });
                         return;
                       }
-                      Navigator.push(
+                      Navigator.pushNamed(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => AuthScreen(
-                            orderId: "#SAV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}-EP",
-                            orderDate: DateTime.now(),
-                            totalAmount: widget.totalAmount,
-                            paymentMethod: "Telebirr",
-                            cartItems: widget.cartItems,
-                          ),
-                        ),
+                        AppRoutes.auth,
+                        arguments: {
+                          'orderId': "#SAV-${DateTime.now().millisecondsSinceEpoch.toString().substring(7)}-EP",
+                          'orderDate': DateTime.now(),
+                          'totalAmount': widget.totalAmount,
+                          'paymentMethod': "Telebirr",
+                          'cartItems': widget.cartItems,
+                        },
                       );
                     },
                   ),

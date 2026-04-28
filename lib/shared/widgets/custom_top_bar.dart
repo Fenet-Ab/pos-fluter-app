@@ -34,6 +34,9 @@ class CustomTopBar extends StatelessWidget implements PreferredSizeWidget {
   /// Whether to show the status indicator.
   final bool showStatus;
 
+  /// Whether to center the title.
+  final bool centerTitle;
+
   /// Callback when the leading icon is tapped.
   /// Defaults to opening the Scaffold drawer if it's a menu icon.
   final VoidCallback? onLeadingTap;
@@ -56,6 +59,9 @@ class CustomTopBar extends StatelessWidget implements PreferredSizeWidget {
   /// Horizontal spacing between navbar items. Defaults to 4.
   final double itemSpacing;
 
+  /// Badge count for trailing icon. Defaults to 0.
+  final int trailingBadgeCount;
+
   const CustomTopBar({
     super.key,
     this.title = 'SAVVY POS',
@@ -67,13 +73,15 @@ class CustomTopBar extends StatelessWidget implements PreferredSizeWidget {
     this.showLeadingIcon = true,
     this.showTrailingIcon = true,
     this.showStatus = true,
+    this.centerTitle = false,
     this.onLeadingTap,
     this.onTrailingTap,
     this.backgroundColor,
     this.borderColor,
-    this.height = 75,
-    this.titleFontSize = 22,
+    this.height = 70,
+    this.titleFontSize = 20,
     this.itemSpacing = 4,
+    this.trailingBadgeCount = 0,
   });
 
   @override
@@ -113,18 +121,24 @@ class CustomTopBar extends StatelessWidget implements PreferredSizeWidget {
 
             SizedBox(width: itemSpacing),
 
-            // Logo/Title & Status
             Expanded(
               child: Row(
+                mainAxisAlignment: centerTitle 
+                    ? MainAxisAlignment.center 
+                    : MainAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: AppTextStyles.subHeading(color: AppColors.primary)
-                        .copyWith(
-                          fontWeight: FontWeight.w900,
-                          fontSize: titleFontSize,
-                          letterSpacing: -0.8,
-                        ),
+                  Flexible(
+                    child: Text(
+                      title,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: AppTextStyles.subHeading(color: AppColors.primary)
+                          .copyWith(
+                            fontWeight: FontWeight.bold,
+                            fontSize: titleFontSize,
+                            letterSpacing: 0.0,
+                          ),
+                    ),
                   ),
                   if (showStatus) ...[
                     SizedBox(width: itemSpacing * 4),
@@ -158,8 +172,8 @@ class CustomTopBar extends StatelessWidget implements PreferredSizeWidget {
           padding: const EdgeInsets.all(8.0),
           child: Icon(
             icon,
-            color: AppColors.textPrimary.withOpacity(0.7),
-            size: 28,
+            color: AppColors.textPrimary.withOpacity(0.8),
+            size: 24,
           ),
         ),
       ),
@@ -167,21 +181,53 @@ class CustomTopBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _buildProfileIcon() {
-    return InkWell(
-      onTap: onTrailingTap,
-      borderRadius: BorderRadius.circular(30),
-      child: Container(
-        padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
-          color: AppColors.primary.withOpacity(0.08),
-          shape: BoxShape.circle,
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        InkWell(
+          onTap: onTrailingTap,
+          borderRadius: BorderRadius.circular(30),
+          child: Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.08),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              trailingIcon ?? Icons.person_rounded,
+              color: AppColors.primary,
+              size: 32,
+            ),
+          ),
         ),
-        child: Icon(
-          trailingIcon ?? Icons.person_rounded,
-          color: AppColors.primary,
-          size: 32,
-        ),
-      ),
+        if (trailingBadgeCount > 0)
+          Positioned(
+            right: -2,
+            top: -2,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 20,
+                minHeight: 20,
+              ),
+              child: Center(
+                child: Text(
+                  trailingBadgeCount > 99 ? '99+' : trailingBadgeCount.toString(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 

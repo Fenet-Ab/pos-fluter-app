@@ -3,10 +3,10 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 
 /// A premium sales card component designed for product listings.
-/// 
+///
 /// It features a top section with a product image and an add button,
 /// and a bottom section with category, title, and price.
-class SalesCard extends StatelessWidget {
+class SalesCard extends StatefulWidget {
   /// The image source (could be asset path or network URL).
   final String imageUrl;
 
@@ -40,7 +40,39 @@ class SalesCard extends StatelessWidget {
   });
 
   @override
+  State<SalesCard> createState() => _SalesCardState();
+}
+
+class _SalesCardState extends State<SalesCard> {
+  int _quantity = 0;
+
+  void _increment() {
+    setState(() {
+      _quantity++;
+    });
+    if (widget.onAddTap != null) {
+      widget.onAddTap!();
+    }
+  }
+
+  void _decrement() {
+    setState(() {
+      if (_quantity > 0) {
+        _quantity--;
+      }
+    });
+    // Can hook up to a Remove callback if one is added in the future
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final imageUrl = widget.imageUrl;
+    final category = widget.category;
+    final title = widget.title;
+    final price = widget.price;
+    final onTap = widget.onTap;
+    final isNetworkImage = widget.isNetworkImage;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -71,11 +103,15 @@ class SalesCard extends StatelessWidget {
                     // Background tinted area
                     Container(
                       width: double.infinity,
-                      color: const Color(0xFFE8EFFF), // Very light blue background to match image
+                      color: const Color(
+                        0xFFE8EFFF,
+                      ), // Very light blue background to match image
                       padding: const EdgeInsets.all(16),
                       child: Center(
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(4), // Slightly rounded corners for the product image
+                          borderRadius: BorderRadius.circular(
+                            4,
+                          ), // Slightly rounded corners for the product image
                           child: isNetworkImage
                               ? Image.network(
                                   imageUrl,
@@ -83,7 +119,11 @@ class SalesCard extends StatelessWidget {
                                   height: 129,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+                                      const Icon(
+                                        Icons.broken_image,
+                                        size: 50,
+                                        color: Colors.grey,
+                                      ),
                                 )
                               : Image.asset(
                                   imageUrl,
@@ -91,7 +131,11 @@ class SalesCard extends StatelessWidget {
                                   height: 129,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.shopping_bag_outlined, size: 50, color: Colors.grey),
+                                      const Icon(
+                                        Icons.shopping_bag_outlined,
+                                        size: 50,
+                                        color: Colors.grey,
+                                      ),
                                 ),
                         ),
                       ),
@@ -100,26 +144,76 @@ class SalesCard extends StatelessWidget {
                     Positioned(
                       top: 10,
                       right: 10,
-                      child: GestureDetector(
-                        onTap: onAddTap,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 6,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.add_circle_outline_rounded,
-                            color: AppColors.primary,
-                            size: 24,
-                          ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: _quantity > 0
+                              ? Row(
+                                  key: const ValueKey('quantity_selector'),
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: _decrement,
+                                      behavior: HitTestBehavior.opaque,
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Icon(
+                                          Icons.remove_circle_outline_rounded,
+                                          color: AppColors.primary,
+                                          size: 24,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                      child: Text(
+                                        '$_quantity',
+                                        textAlign: TextAlign.center,
+                                        style: AppTextStyles.body().copyWith(
+                                          color: AppColors.textPrimary,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: _increment,
+                                      behavior: HitTestBehavior.opaque,
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Icon(
+                                          Icons.add_circle_outline_rounded,
+                                          color: AppColors.primary,
+                                          size: 24,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : GestureDetector(
+                                  key: const ValueKey('add_button'),
+                                  onTap: _increment,
+                                  behavior: HitTestBehavior.opaque,
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Icon(
+                                      Icons.add_circle_outline_rounded,
+                                      color: AppColors.primary,
+                                      size: 24,
+                                    ),
+                                  ),
+                                ),
                         ),
                       ),
                     ),
@@ -137,7 +231,9 @@ class SalesCard extends StatelessWidget {
                   Text(
                     category.toUpperCase(),
                     style: AppTextStyles.body().copyWith(
-                      color: const Color(0xFF8E8E93), // Specific grey from image
+                      color: const Color(
+                        0xFF8E8E93,
+                      ), // Specific grey from image
                       fontSize: 13,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 0.8,
@@ -148,8 +244,8 @@ class SalesCard extends StatelessWidget {
                     title,
                     style: AppTextStyles.subHeading().copyWith(
                       color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 19,
+                      // fontWeight: FontWeight.bold,
+                      // fontSize: 16,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -160,7 +256,7 @@ class SalesCard extends StatelessWidget {
                     style: AppTextStyles.heading().copyWith(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w900,
-                      fontSize: 24,
+                      fontSize: 18,
                     ),
                   ),
                 ],

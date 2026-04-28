@@ -12,6 +12,8 @@ class CustomButton extends StatelessWidget {
   final Color? iconColor;
   final IconData? icon;
   final MainAxisAlignment mainAxisAlignment;
+  final bool isLoading;
+  final Color? loadingColor;
 
   final double spacing;
   final bool iconLeading;
@@ -28,11 +30,13 @@ class CustomButton extends StatelessWidget {
     this.textColor,
     this.iconColor,
     this.icon,
-    this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
+     this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
     this.spacing = 8.0,
     this.iconLeading = false,
     this.height = 56.0,
     this.width = double.infinity,
+    this.isLoading = false,
+    this.loadingColor,
   });
 
   @override
@@ -54,31 +58,42 @@ class CustomButton extends StatelessWidget {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 24),
         ),
-        child: Row(
-          mainAxisAlignment: mainAxisAlignment,
-          children: [
-            if (icon != null && iconLeading) ...[
-              Icon(
-                icon,
-                size: 20,
-                color: iconColor ?? textColor ?? Colors.white,
+         child: isLoading
+            ? Center(
+                child: SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    color: loadingColor ?? textColor ?? Colors.white,
+                    strokeWidth: 2,
+                  ),
+                ),
+              )
+            : Row(
+                mainAxisAlignment: mainAxisAlignment,
+                children: [
+                  if (icon != null && iconLeading) ...[
+                    Icon(
+                      icon,
+                      size: 20,
+                      color: iconColor ?? textColor ?? Colors.white,
+                    ),
+                    SizedBox(width: spacing),
+                  ],
+                  Text(
+                    text,
+                    style: AppTextStyles.subHeading(color: textColor ?? Colors.white),
+                  ),
+                  if (icon != null && !iconLeading) ...[
+                    SizedBox(width: spacing),
+                    Icon(
+                      icon,
+                      size: 20,
+                      color: iconColor ?? textColor ?? Colors.white,
+                    ),
+                  ],
+                ],
               ),
-              SizedBox(width: spacing),
-            ],
-            Text(
-              text,
-              style: AppTextStyles.subHeading(color: textColor ?? Colors.white),
-            ),
-            if (icon != null && !iconLeading) ...[
-              SizedBox(width: spacing),
-              Icon(
-                icon,
-                size: 20,
-                color: iconColor ?? textColor ?? Colors.white,
-              ),
-            ],
-          ],
-        ),
       ),
     );
   }

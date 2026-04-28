@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../shared/widgets/custom_button.dart';
-import '../dashboard/dashboard_screen.dart';
 import '../../models/user_model.dart';
+import '../../core/routes/app_routes.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -47,11 +47,10 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       );
-      Navigator.pushReplacement(
+      Navigator.pushReplacementNamed(
         context,
-        MaterialPageRoute(
-          builder: (context) => const DashboardScreen(),
-        ),
+        AppRoutes.dashboard,
+        arguments: {'user': user},
       );
     } catch (e) {
       // Login failed

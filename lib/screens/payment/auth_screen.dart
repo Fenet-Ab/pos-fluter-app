@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
-import '../success/success_screen.dart';
+import '../../core/routes/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../shared/widgets/custom_button.dart';
@@ -432,17 +432,15 @@ class _AuthScreenState extends State<AuthScreen> {
 
       if (!mounted) return;
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SuccessScreen(
-            signatureImage: signatureImage,
-            orderId: orderId,
-            orderDate: orderDate,
-            totalAmount: widget.totalAmount,
-            paymentMethod: widget.paymentMethod,
-          ),
-        ),
+      Navigator.of(context).pushNamed(
+        AppRoutes.success,
+        arguments: {
+          'signatureImage': signatureImage,
+          'orderId': orderId,
+          'orderDate': orderDate,
+          'totalAmount': widget.totalAmount,
+          'paymentMethod': widget.paymentMethod,
+        },
       );
     } catch (e) {
       if (!mounted) return;
