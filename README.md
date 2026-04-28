@@ -15,7 +15,7 @@ A modern, high-performance Point of Sale (POS) application built with **Flutter*
 - **⚡ Real-time Authorization**: Secure authorization flow with digital signature capture.
 - **🔄 Dynamic Refunds**: Real-time transaction history with manager PIN authorization (`123456`).
 - **📄 Professional Receipts**: Generate, print, and share digital PDF receipts for both sales and refunds.
-- **💎 Premium UI/UX**: Crafted with modern design principles, featuring custom widgets and smooth animations.
+
 
 ---
 
